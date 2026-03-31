@@ -652,13 +652,17 @@
       initAxisBars();
 
       // Écouter les participants
-      listenToParticipants();
+      if (firebaseOk) {
+        listenToParticipants();
 
-      // Détecter la connexion
-      const connRef = ref(db, ".info/connected");
-      onValue(connRef, (snap) => {
-        offlineBadge.classList.toggle("visible", snap.val() !== true);
-      });
+        // Détecter la connexion
+        const connRef = ref(db, ".info/connected");
+        onValue(connRef, (snap) => {
+          offlineBadge.classList.toggle("visible", snap.val() !== true);
+        });
+      } else {
+        offlineBadge.classList.add("visible");
+      }
     }
 
     // --- QR Code ---
