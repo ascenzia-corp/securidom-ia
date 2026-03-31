@@ -9,452 +9,144 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     body {
       font-family: 'Telegraf', 'Inter', -apple-system, sans-serif;
       background: linear-gradient(135deg, #1A202C 0%, #2D3748 100%);
       color: #EBEBEE;
       min-height: 100vh;
     }
-
-    /* ===== ÉCRAN SETUP ===== */
-    .setup-screen {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-    }
-
+    .setup-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
     .setup-screen.hidden { display: none; }
-
     .setup-card {
-      background: #2D3748;
-      border: 1px solid #4A5568;
-      border-radius: 12px;
-      padding: 40px;
-      max-width: 500px;
-      width: 100%;
-      text-align: center;
+      background: #2D3748; border: 1px solid #4A5568; border-radius: 12px;
+      padding: 40px; max-width: 500px; width: 100%; text-align: center;
       box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
     }
-
     .setup-card .logo { height: 40px; margin-bottom: 24px; opacity: 0.9; }
-
-    .setup-card h1 {
-      color: #DDAC63;
-      font-size: 1.5rem;
-      margin-bottom: 8px;
-    }
-
-    .setup-card .sub {
-      color: #A0AEC0;
-      font-size: 0.9rem;
-      margin-bottom: 28px;
-    }
-
-    .setup-card label {
-      display: block;
-      text-align: left;
-      font-size: 0.8rem;
-      color: #A0AEC0;
-      margin-bottom: 6px;
-    }
-
+    .setup-card h1 { color: #DDAC63; font-size: 1.5rem; margin-bottom: 8px; }
+    .setup-card .sub { color: #A0AEC0; font-size: 0.9rem; margin-bottom: 28px; }
+    .setup-card label { display: block; text-align: left; font-size: 0.8rem; color: #A0AEC0; margin-bottom: 6px; }
     .setup-card input {
-      width: 100%;
-      padding: 12px 16px;
-      background: #1A202C;
-      border: 1px solid #4A5568;
-      border-radius: 8px;
-      color: #EBEBEE;
-      font-size: 1rem;
-      font-family: inherit;
-      outline: none;
-      margin-bottom: 16px;
-      transition: border-color 0.2s;
+      width: 100%; padding: 12px 16px; background: #1A202C; border: 1px solid #4A5568;
+      border-radius: 8px; color: #EBEBEE; font-size: 1rem; font-family: inherit;
+      outline: none; margin-bottom: 16px; transition: border-color 0.2s;
     }
-
     .setup-card input:focus { border-color: #DDAC63; }
-
     .btn {
-      display: inline-block;
-      padding: 12px 24px;
-      background: #DDAC63;
-      color: #1A202C;
-      border: none;
-      border-radius: 8px;
-      font-size: 1rem;
-      font-weight: 600;
-      font-family: inherit;
-      cursor: pointer;
-      transition: background 0.2s;
+      display: inline-block; padding: 12px 24px; background: #DDAC63; color: #1A202C;
+      border: none; border-radius: 8px; font-size: 1rem; font-weight: 600;
+      font-family: inherit; cursor: pointer; transition: background 0.2s;
     }
-
     .btn:hover { background: #B8860B; }
-
-    .btn-outline {
-      background: transparent;
-      border: 1px solid #4A5568;
-      color: #EBEBEE;
-    }
-
+    .btn-outline { background: transparent; border: 1px solid #4A5568; color: #EBEBEE; }
     .btn-outline:hover { border-color: #DDAC63; background: rgba(221, 172, 99, 0.1); }
-
-    .btn-sm {
-      padding: 8px 16px;
-      font-size: 0.85rem;
-    }
-
-    .btn-danger {
-      background: transparent;
-      border: 1px solid #E53E3E;
-      color: #E53E3E;
-    }
-
+    .btn-sm { padding: 8px 16px; font-size: 0.85rem; }
+    .btn-danger { background: transparent; border: 1px solid #E53E3E; color: #E53E3E; }
     .btn-danger:hover { background: rgba(229, 62, 62, 0.1); }
-
-    .setup-buttons {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    /* ===== DASHBOARD PRINCIPAL ===== */
+    .setup-buttons { display: flex; flex-direction: column; gap: 10px; }
     .dashboard { display: none; min-height: 100vh; flex-direction: column; }
     .dashboard.active { display: flex; }
-
-    /* Header */
     .dash-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 16px 32px;
-      border-bottom: 1px solid #4A5568;
-      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 32px; border-bottom: 1px solid #4A5568; flex-shrink: 0;
     }
-
     .dash-header .logo { height: 32px; opacity: 0.8; }
-
-    .dash-header h1 {
-      color: #DDAC63;
-      font-size: 1.3rem;
-      font-weight: 700;
-    }
-
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
+    .dash-header h1 { color: #DDAC63; font-size: 1.3rem; font-weight: 700; }
+    .header-right { display: flex; align-items: center; gap: 16px; }
     .participant-count {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(221, 172, 99, 0.1);
-      border: 1px solid rgba(221, 172, 99, 0.3);
-      border-radius: 20px;
-      padding: 6px 16px;
-      font-weight: 600;
-      color: #DDAC63;
-      transition: transform 0.3s ease;
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(221, 172, 99, 0.1); border: 1px solid rgba(221, 172, 99, 0.3);
+      border-radius: 20px; padding: 6px 16px; font-weight: 600; color: #DDAC63;
     }
-
-    .participant-count.bounce {
-      animation: bounceScale 0.4s ease;
-    }
-
-    @keyframes bounceScale {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.15); }
-    }
-
+    .participant-count.bounce { animation: bounceScale 0.4s ease; }
+    @keyframes bounceScale { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
     .mute-btn {
-      background: transparent;
-      border: 1px solid #4A5568;
-      border-radius: 8px;
-      color: #A0AEC0;
-      padding: 6px 10px;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: all 0.2s;
+      background: transparent; border: 1px solid #4A5568; border-radius: 8px;
+      color: #A0AEC0; padding: 6px 10px; font-size: 1rem; cursor: pointer;
     }
-
     .mute-btn:hover { border-color: #DDAC63; color: #DDAC63; }
     .mute-btn.muted { opacity: 0.4; }
-
-    /* Contenu principal */
     .dash-content {
-      flex: 1;
-      display: grid;
-      grid-template-columns: 60% 40%;
-      gap: 24px;
-      padding: 24px 32px;
-      overflow: auto;
+      flex: 1; display: grid; grid-template-columns: 60% 40%;
+      gap: 24px; padding: 24px 32px; overflow: auto;
     }
-
-    /* Colonne gauche */
-    .col-left {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-
+    .col-left { display: flex; flex-direction: column; gap: 20px; }
     .radar-card {
-      background: #2D3748;
-      border: 1px solid #4A5568;
-      border-radius: 12px;
-      padding: 24px;
-      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      background: #2D3748; border: 1px solid #4A5568; border-radius: 12px;
+      padding: 24px; box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+      flex: 1; display: flex; align-items: center; justify-content: center;
     }
-
     .radar-card canvas { max-width: 100%; max-height: 450px; }
-
-    .group-score {
-      text-align: center;
-      padding: 8px;
-    }
-
-    .group-score .number {
-      font-size: 3rem;
-      font-weight: 800;
-      color: #DDAC63;
-      line-height: 1;
-    }
-
+    .group-score { text-align: center; padding: 8px; }
+    .group-score .number { font-size: 3rem; font-weight: 800; color: #DDAC63; line-height: 1; }
     .group-score .label-badge {
-      display: inline-block;
-      margin-top: 6px;
-      padding: 4px 14px;
-      background: rgba(221, 172, 99, 0.15);
-      border: 1px solid rgba(221, 172, 99, 0.3);
-      border-radius: 16px;
-      color: #DDAC63;
-      font-weight: 600;
-      font-size: 0.9rem;
+      display: inline-block; margin-top: 6px; padding: 4px 14px;
+      background: rgba(221, 172, 99, 0.15); border: 1px solid rgba(221, 172, 99, 0.3);
+      border-radius: 16px; color: #DDAC63; font-weight: 600; font-size: 0.9rem;
     }
-
-    /* Colonne droite */
-    .col-right {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-
+    .col-right { display: flex; flex-direction: column; gap: 20px; }
     .card {
-      background: #2D3748;
-      border: 1px solid #4A5568;
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+      background: #2D3748; border: 1px solid #4A5568; border-radius: 12px;
+      padding: 20px; box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
     }
-
-    .card h3 {
-      color: #DDAC63;
-      font-size: 0.9rem;
-      font-weight: 600;
-      margin-bottom: 16px;
-    }
-
-    /* Barres axes */
-    .axis-bars {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .axis-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .axis-label {
-      width: 130px;
-      font-size: 0.8rem;
-      color: #A0AEC0;
-      flex-shrink: 0;
-    }
-
-    .axis-bar-bg {
-      flex: 1;
-      height: 10px;
-      background: #1A202C;
-      border-radius: 5px;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .axis-bar-fill {
-      height: 100%;
-      border-radius: 5px;
-      transition: width 0.6s ease;
-    }
-
-    .axis-bar-range {
-      position: absolute;
-      top: 0;
-      height: 100%;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 5px;
-    }
-
-    .axis-value {
-      width: 40px;
-      text-align: right;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: #DDAC63;
-    }
-
-    /* Distribution chart */
-    .distribution-chart {
-      height: 200px;
-    }
-
-    /* Footer */
+    .card h3 { color: #DDAC63; font-size: 0.9rem; font-weight: 600; margin-bottom: 16px; }
+    .axis-bars { display: flex; flex-direction: column; gap: 12px; }
+    .axis-row { display: flex; align-items: center; gap: 12px; }
+    .axis-label { width: 130px; font-size: 0.8rem; color: #A0AEC0; flex-shrink: 0; }
+    .axis-bar-bg { flex: 1; height: 10px; background: #1A202C; border-radius: 5px; overflow: hidden; }
+    .axis-bar-fill { height: 100%; border-radius: 5px; transition: width 0.6s ease; }
+    .axis-value { width: 40px; text-align: right; font-size: 0.85rem; font-weight: 600; color: #DDAC63; }
+    .distribution-chart { height: 200px; }
     .dash-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 32px;
-      border-top: 1px solid #4A5568;
-      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 32px; border-top: 1px solid #4A5568; flex-shrink: 0;
     }
-
-    .last-participant {
-      color: #A0AEC0;
-      font-size: 0.85rem;
-      transition: opacity 0.3s;
-    }
-
-    .last-participant span {
-      color: #52BEC0;
-      font-weight: 600;
-    }
-
-    .last-participant.flash {
-      animation: flash 0.6s ease;
-    }
-
-    @keyframes flash {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.3; }
-    }
-
-    .footer-text {
-      color: #4A5568;
-      font-size: 0.75rem;
-    }
-
-    .footer-actions {
-      display: flex;
-      gap: 8px;
-    }
-
-    /* État vide */
-    .empty-state {
-      text-align: center;
-      padding: 48px 24px;
-    }
-
-    .empty-state h2 {
-      color: #DDAC63;
-      margin-bottom: 16px;
-      font-size: 1.3rem;
-    }
-
-    .empty-state p {
-      color: #A0AEC0;
-      margin-bottom: 24px;
-      font-size: 0.95rem;
-    }
-
+    .last-participant { color: #A0AEC0; font-size: 0.85rem; }
+    .last-participant span { color: #52BEC0; font-weight: 600; }
+    .footer-text { color: #4A5568; font-size: 0.75rem; }
+    .footer-actions { display: flex; gap: 8px; }
+    .empty-state { text-align: center; padding: 48px 24px; }
+    .empty-state h2 { color: #DDAC63; margin-bottom: 16px; font-size: 1.3rem; }
+    .empty-state p { color: #A0AEC0; margin-bottom: 24px; font-size: 0.95rem; }
     .qr-container {
-      background: white;
-      border-radius: 12px;
-      padding: 16px;
-      display: inline-block;
-      margin-bottom: 16px;
+      background: white; border-radius: 12px; padding: 16px;
+      display: inline-block; margin-bottom: 16px;
     }
-
-    .qr-container canvas { display: block; }
-
-    .share-url {
-      font-size: 0.8rem;
-      color: #A0AEC0;
-      word-break: break-all;
-      margin-top: 8px;
+    .share-url { font-size: 0.8rem; color: #A0AEC0; word-break: break-all; margin-top: 8px; }
+    .status-dot {
+      width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px;
     }
-
-    /* Offline indicator */
-    .offline-badge {
-      display: none;
-      background: #E53E3E;
-      color: white;
-      padding: 4px 12px;
-      border-radius: 12px;
-      font-size: 0.75rem;
-      font-weight: 600;
-    }
-
-    .offline-badge.visible { display: inline-block; }
-
-    /* Responsive */
+    .status-dot.ok { background: #48BB78; }
+    .status-dot.loading { background: #DDAC63; animation: pulse 1s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
     @media (max-width: 900px) {
-      .dash-content {
-        grid-template-columns: 1fr;
-        padding: 16px;
-      }
+      .dash-content { grid-template-columns: 1fr; padding: 16px; }
       .dash-header { padding: 12px 16px; }
       .dash-footer { padding: 12px 16px; flex-wrap: wrap; gap: 8px; }
     }
-
-    /* Confirm modal */
     .confirm-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.6);
-      z-index: 200;
-      align-items: center;
-      justify-content: center;
+      display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6);
+      z-index: 200; align-items: center; justify-content: center;
     }
-
     .confirm-overlay.active { display: flex; }
-
     .confirm-box {
-      background: #2D3748;
-      border: 1px solid #4A5568;
-      border-radius: 12px;
-      padding: 32px;
-      max-width: 380px;
-      text-align: center;
-      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+      background: #2D3748; border: 1px solid #4A5568; border-radius: 12px;
+      padding: 32px; max-width: 380px; text-align: center;
     }
-
     .confirm-box h3 { color: #E53E3E; margin-bottom: 12px; }
     .confirm-box p { color: #A0AEC0; margin-bottom: 20px; font-size: 0.9rem; }
     .confirm-box .btns { display: flex; gap: 8px; justify-content: center; }
   </style>
 </head>
 <body>
-
-  <!-- ===== ÉCRAN SETUP ===== -->
+  <!-- SETUP -->
   <div class="setup-screen" id="setupScreen">
     <div class="setup-card">
       <img src="https://www.ascenzia.fr/hubfs/Corporate/Logos/PNG/logo_ascenzia_fond_sombre.png" alt="Ascenzia" class="logo">
       <h1>Dashboard Formateur</h1>
       <p class="sub">Créez ou rejoignez une session pour commencer</p>
-
       <label for="setupSessionInput">Code de session</label>
       <input type="text" id="setupSessionInput" placeholder="ex. securidom-2026-04">
-
       <div class="setup-buttons">
         <button class="btn" id="createSessionBtn">Créer une nouvelle session</button>
         <button class="btn btn-outline" id="joinSessionBtn">Rejoindre cette session</button>
@@ -462,46 +154,35 @@
     </div>
   </div>
 
-  <!-- ===== DASHBOARD ===== -->
+  <!-- DASHBOARD -->
   <div class="dashboard" id="dashboard">
-    <!-- Header -->
     <div class="dash-header">
       <img src="https://www.ascenzia.fr/hubfs/Corporate/Logos/PNG/logo_ascenzia_fond_sombre.png" alt="Ascenzia" class="logo">
       <h1>Profil IA du Groupe</h1>
       <div class="header-right">
-        <span class="offline-badge" id="offlineBadge">Hors ligne</span>
+        <span style="font-size:0.75rem;color:#A0AEC0;"><span class="status-dot loading" id="statusDot"></span><span id="statusText">Connexion…</span></span>
         <div class="participant-count" id="participantCount">
           <span id="countNumber">0</span> participants
         </div>
         <button class="mute-btn" id="muteBtn" title="Couper/activer le son">🔔</button>
       </div>
     </div>
-
-    <!-- Contenu principal : état vide -->
     <div class="empty-state" id="emptyState">
       <h2>En attente de participants…</h2>
       <p>Partagez ce QR code pour que les participants rejoignent la session</p>
-      <div class="qr-container" id="qrContainer">
-        <img id="qrCode" width="300" height="300" alt="QR Code">
-      </div>
+      <div class="qr-container"><img id="qrCode" width="300" height="300" alt="QR Code"></div>
       <p class="share-url" id="shareUrl"></p>
+      <p style="color:#A0AEC0;font-size:0.75rem;margin-top:16px;">Rafraîchissement automatique toutes les 5 secondes</p>
     </div>
-
-    <!-- Contenu principal : données -->
     <div class="dash-content" id="dashContent" style="display:none;">
-      <!-- Colonne gauche -->
       <div class="col-left">
-        <div class="radar-card">
-          <canvas id="groupRadar"></canvas>
-        </div>
+        <div class="radar-card"><canvas id="groupRadar"></canvas></div>
         <div class="group-score">
           <div class="number" id="groupScoreNumber">—</div>
           <div style="color:#A0AEC0;font-size:0.85rem;">sur 100</div>
           <div class="label-badge" id="groupLabel">—</div>
         </div>
       </div>
-
-      <!-- Colonne droite -->
       <div class="col-right">
         <div class="card">
           <h3>Score moyen par axe</h3>
@@ -509,38 +190,21 @@
         </div>
         <div class="card">
           <h3>Distribution des profils</h3>
-          <div class="distribution-chart">
-            <canvas id="distChart"></canvas>
-          </div>
+          <div class="distribution-chart"><canvas id="distChart"></canvas></div>
         </div>
       </div>
     </div>
-
-    <!-- Footer -->
     <div class="dash-footer">
       <div class="last-participant" id="lastParticipant">En attente…</div>
       <div class="footer-actions">
         <button class="btn btn-sm btn-outline" id="showQrBtn">QR Code</button>
         <button class="btn btn-sm btn-outline" id="exportCsvBtn">Exporter CSV</button>
-        <button class="btn btn-sm btn-danger" id="resetBtn">Réinitialiser</button>
       </div>
       <div class="footer-text">Ascenzia — Formation Cadres Augmentés par l'IA © 2026</div>
     </div>
   </div>
 
-  <!-- Modal confirm reset -->
-  <div class="confirm-overlay" id="confirmOverlay">
-    <div class="confirm-box">
-      <h3>Réinitialiser la session ?</h3>
-      <p>Toutes les réponses des participants seront supprimées. Cette action est irréversible.</p>
-      <div class="btns">
-        <button class="btn btn-sm btn-outline" id="confirmCancel">Annuler</button>
-        <button class="btn btn-sm btn-danger" id="confirmReset">Supprimer tout</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal QR Code -->
+  <!-- Modal QR -->
   <div class="confirm-overlay" id="qrOverlay">
     <div class="confirm-box" style="max-width:420px;">
       <h3 style="color:#DDAC63;">Partagez ce QR Code</h3>
@@ -551,118 +215,68 @@
   </div>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getDatabase, ref, push, set, onValue, onChildAdded, remove, get }
-      from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-    import { firebaseConfig } from "./js/firebase-config.js";
-    import { AXES, computeScores, computeGlobal, getLabel, getMaturityIndex, MATURITY_LABELS } from "./js/scoring.js";
-
-    // --- Init Firebase (avec gestion d'erreur) ---
-    let app, db;
-    let firebaseOk = false;
-    try {
-      // Vérifier que la config n'a pas les valeurs placeholder
-      if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "VOTRE_API_KEY") {
-        app = initializeApp(firebaseConfig);
-        db = getDatabase(app);
-        firebaseOk = true;
-        console.log("Firebase initialisé avec succès");
-      } else {
-        console.warn("Firebase non configuré — les valeurs sont encore des placeholders");
-      }
-    } catch (err) {
-      console.error("Erreur d'initialisation Firebase:", err);
-    }
+    import { WEBHOOK_URL } from "./js/config.js";
+    import { AXES, getLabel, getMaturityIndex, MATURITY_LABELS } from "./js/scoring.js";
 
     // --- État ---
     let sessionId = "";
     let participants = [];
+    let previousCount = 0;
     let isMuted = false;
     let groupRadarChart = null;
     let distChart = null;
     let audioCtx = null;
+    let pollInterval = null;
 
-    // --- Éléments DOM ---
+    // --- DOM ---
     const setupScreen = document.getElementById("setupScreen");
-    const dashboard = document.getElementById("dashboard");
+    const dashboardEl = document.getElementById("dashboard");
     const emptyState = document.getElementById("emptyState");
     const dashContent = document.getElementById("dashContent");
     const countNumber = document.getElementById("countNumber");
     const participantCountEl = document.getElementById("participantCount");
     const lastParticipantEl = document.getElementById("lastParticipant");
     const groupScoreNumber = document.getElementById("groupScoreNumber");
-    const groupLabel = document.getElementById("groupLabel");
+    const groupLabelEl = document.getElementById("groupLabel");
     const axisBarsEl = document.getElementById("axisBars");
-    const offlineBadge = document.getElementById("offlineBadge");
+    const statusDot = document.getElementById("statusDot");
+    const statusText = document.getElementById("statusText");
 
     // --- Session depuis l'URL ---
     const params = new URLSearchParams(window.location.search);
     const sessionFromUrl = params.get("session");
-    if (sessionFromUrl) {
-      document.getElementById("setupSessionInput").value = sessionFromUrl;
-    }
+    if (sessionFromUrl) document.getElementById("setupSessionInput").value = sessionFromUrl;
 
-    // --- Setup : créer session ---
-    document.getElementById("createSessionBtn").addEventListener("click", async () => {
+    // --- Créer session ---
+    document.getElementById("createSessionBtn").addEventListener("click", () => {
       let sid = document.getElementById("setupSessionInput").value.trim();
       if (!sid) {
-        // Générer un ID
         const now = new Date();
         sid = `securidom-${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
         document.getElementById("setupSessionInput").value = sid;
       }
       sessionId = sid;
-
-      // Créer la session dans Firebase (non-bloquant)
-      if (firebaseOk) {
-        set(ref(db, `sessions/${sessionId}/metadata`), {
-          createdAt: Date.now(),
-          name: sessionId,
-          active: true
-        }).catch(err => console.error("Erreur création session:", err));
-      }
-
       startDashboard();
     });
 
-    // --- Setup : rejoindre session ---
+    // --- Rejoindre session ---
     document.getElementById("joinSessionBtn").addEventListener("click", () => {
       const sid = document.getElementById("setupSessionInput").value.trim();
-      if (!sid) {
-        document.getElementById("setupSessionInput").style.borderColor = "#E53E3E";
-        return;
-      }
+      if (!sid) { document.getElementById("setupSessionInput").style.borderColor = "#E53E3E"; return; }
       sessionId = sid;
       startDashboard();
     });
 
-    // --- Démarrer le dashboard ---
+    // --- Démarrer ---
     function startDashboard() {
       setupScreen.classList.add("hidden");
-      dashboard.classList.add("active");
-
-      // Mettre à jour l'URL
-      const newUrl = `${window.location.pathname}?session=${encodeURIComponent(sessionId)}`;
-      window.history.replaceState({}, "", newUrl);
-
-      // Générer QR codes
+      dashboardEl.classList.add("active");
+      window.history.replaceState({}, "", `${window.location.pathname}?session=${encodeURIComponent(sessionId)}`);
       generateQRCodes();
-
-      // Init les barres d'axes
       initAxisBars();
-
-      // Écouter les participants
-      if (firebaseOk) {
-        listenToParticipants();
-
-        // Détecter la connexion
-        const connRef = ref(db, ".info/connected");
-        onValue(connRef, (snap) => {
-          offlineBadge.classList.toggle("visible", snap.val() !== true);
-        });
-      } else {
-        offlineBadge.classList.add("visible");
-      }
+      // Premier chargement puis polling
+      fetchParticipants();
+      pollInterval = setInterval(fetchParticipants, 5000);
     }
 
     // --- QR Code ---
@@ -670,12 +284,8 @@
       const baseUrl = window.location.origin + window.location.pathname.replace("dashboard.html", "");
       const quizUrl = `${baseUrl}quiz.html?session=${encodeURIComponent(sessionId)}`;
       const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(quizUrl)}&color=1A202C&bgcolor=FFFFFF`;
-
-      // QR dans l'état vide
       document.getElementById("qrCode").src = qrApiUrl;
       document.getElementById("shareUrl").textContent = quizUrl;
-
-      // QR dans la modal
       document.getElementById("qrContainerModal").innerHTML = `<img src="${qrApiUrl}" width="300" height="300" alt="QR Code">`;
       document.getElementById("shareUrlModal").textContent = quizUrl;
     }
@@ -697,45 +307,46 @@
       });
     }
 
-    // --- Écouter les participants en temps réel ---
-    function listenToParticipants() {
-      const participantsRef = ref(db, `sessions/${sessionId}/participants`);
+    // --- Polling Google Sheets ---
+    async function fetchParticipants() {
+      if (!WEBHOOK_URL || WEBHOOK_URL === "VOTRE_WEBHOOK_URL") {
+        statusDot.className = "status-dot";
+        statusDot.style.background = "#E53E3E";
+        statusText.textContent = "Webhook non configuré";
+        return;
+      }
 
-      // Écouter les changements globaux
-      onValue(participantsRef, (snapshot) => {
-        participants = [];
-        if (snapshot.exists()) {
-          snapshot.forEach((child) => {
-            participants.push(child.val());
-          });
-        }
-        updateDashboard();
-      });
+      try {
+        statusDot.className = "status-dot loading";
+        const url = `${WEBHOOK_URL}?session=${encodeURIComponent(sessionId)}`;
+        const resp = await fetch(url);
+        const json = await resp.json();
 
-      // Écouter les nouveaux arrivants (pour le son + notification)
-      let initialLoad = true;
-      onChildAdded(participantsRef, (snapshot) => {
-        if (initialLoad) {
-          // Ignorer le chargement initial — on utilise onValue pour ça
-          setTimeout(() => { initialLoad = false; }, 2000);
-          return;
+        statusDot.className = "status-dot ok";
+        statusText.textContent = "Connecté";
+
+        if (json.status === "ok" && Array.isArray(json.participants)) {
+          const newCount = json.participants.length;
+          // Nouveau participant ?
+          if (newCount > previousCount && previousCount > 0) {
+            if (!isMuted) playDing();
+            participantCountEl.classList.remove("bounce");
+            void participantCountEl.offsetWidth;
+            participantCountEl.classList.add("bounce");
+          }
+          previousCount = newCount;
+          participants = json.participants;
+          updateDashboard();
         }
-        const p = snapshot.val();
-        // Son
-        if (!isMuted) playDing();
-        // Animation compteur
-        participantCountEl.classList.remove("bounce");
-        void participantCountEl.offsetWidth;
-        participantCountEl.classList.add("bounce");
-        // Dernier arrivé
-        lastParticipantEl.innerHTML = `Dernier inscrit : <span>${p.name}</span>`;
-        lastParticipantEl.classList.remove("flash");
-        void lastParticipantEl.offsetWidth;
-        lastParticipantEl.classList.add("flash");
-      });
+      } catch (err) {
+        console.error("Erreur polling:", err);
+        statusDot.className = "status-dot";
+        statusDot.style.background = "#E53E3E";
+        statusText.textContent = "Erreur réseau";
+      }
     }
 
-    // --- Mise à jour complète du dashboard ---
+    // --- Mise à jour du dashboard ---
     function updateDashboard() {
       const n = participants.length;
       countNumber.textContent = n;
@@ -749,24 +360,18 @@
       emptyState.style.display = "none";
       dashContent.style.display = "grid";
 
-      // Calcul des moyennes par axe
       const avgScores = {};
-      const minScores = {};
-      const maxScores = {};
       AXES.forEach((axe) => {
-        const vals = participants.map((p) => p.scores[axe.id] || 0);
+        const vals = participants.map((p) => parseFloat(p.scores[axe.id]) || 0);
         avgScores[axe.id] = vals.reduce((a, b) => a + b, 0) / vals.length;
-        minScores[axe.id] = Math.min(...vals);
-        maxScores[axe.id] = Math.max(...vals);
       });
 
-      // Score global moyen
       const globalAvg = Object.values(avgScores).reduce((a, b) => a + b, 0) / 5;
       const { label } = getLabel(globalAvg);
       groupScoreNumber.textContent = Math.round(globalAvg * 20);
-      groupLabel.textContent = label;
+      groupLabelEl.textContent = label;
 
-      // Barres d'axes
+      // Barres
       AXES.forEach((axe) => {
         const avg = avgScores[axe.id];
         const pct = (avg / 5) * 100;
@@ -776,58 +381,39 @@
         const b = Math.round(192 + (99 - 192) * ratio);
         const bar = document.getElementById(`bar-${axe.id}`);
         const val = document.getElementById(`val-${axe.id}`);
-        if (bar) {
-          bar.style.width = `${pct}%`;
-          bar.style.background = `rgb(${r}, ${g}, ${b})`;
-        }
+        if (bar) { bar.style.width = `${pct}%`; bar.style.background = `rgb(${r}, ${g}, ${b})`; }
         if (val) val.textContent = avg.toFixed(1);
       });
 
-      // Radar chart du groupe
       updateGroupRadar(avgScores);
-
-      // Distribution
       updateDistribution();
 
-      // Dernier participant
-      if (n > 0) {
-        const last = participants[n - 1];
-        lastParticipantEl.innerHTML = `Dernier inscrit : <span>${last.name}</span>`;
-      }
+      const last = participants[n - 1];
+      lastParticipantEl.innerHTML = `Dernier inscrit : <span>${last.name}</span>`;
     }
 
-    // --- Radar chart du groupe ---
+    // --- Radar ---
     function updateGroupRadar(avgScores) {
       const ctx = document.getElementById("groupRadar");
       const labels = AXES.map((a) => a.label);
       const datasets = [];
-
-      // Chaque participant en teal très léger
       participants.forEach((p) => {
         datasets.push({
           label: p.name,
-          data: AXES.map((a) => p.scores[a.id] || 0),
+          data: AXES.map((a) => parseFloat(p.scores[a.id]) || 0),
           backgroundColor: "rgba(82, 190, 192, 0.08)",
           borderColor: "rgba(82, 190, 192, 0.15)",
-          borderWidth: 1,
-          pointRadius: 0
+          borderWidth: 1, pointRadius: 0
         });
       });
-
-      // Moyenne en or
       datasets.push({
-        label: "Moyenne du groupe",
+        label: "Moyenne",
         data: AXES.map((a) => avgScores[a.id] || 0),
         backgroundColor: "rgba(221, 172, 99, 0.3)",
-        borderColor: "#DDAC63",
-        borderWidth: 3,
-        pointBackgroundColor: "#DDAC63",
-        pointBorderColor: "#DDAC63",
-        pointRadius: 5
+        borderColor: "#DDAC63", borderWidth: 3,
+        pointBackgroundColor: "#DDAC63", pointBorderColor: "#DDAC63", pointRadius: 5
       });
-
       if (groupRadarChart) {
-        groupRadarChart.data.labels = labels;
         groupRadarChart.data.datasets = datasets;
         groupRadarChart.update();
       } else {
@@ -835,31 +421,26 @@
           type: "radar",
           data: { labels, datasets },
           options: {
-            responsive: true,
-            maintainAspectRatio: true,
+            responsive: true, maintainAspectRatio: true,
             scales: {
               r: {
                 beginAtZero: true, min: 0, max: 5,
-                ticks: { stepSize: 1, color: "#EBEBEE", backdropColor: "transparent", font: { size: 11 } },
-                grid: { color: "#4A5568" },
-                angleLines: { color: "#4A5568" },
+                ticks: { stepSize: 1, color: "#EBEBEE", backdropColor: "transparent" },
+                grid: { color: "#4A5568" }, angleLines: { color: "#4A5568" },
                 pointLabels: { color: "#EBEBEE", font: { size: 14, family: "'Telegraf', 'Inter', sans-serif", weight: "bold" } }
               }
             },
             plugins: { legend: { display: false } },
-            animation: { duration: 600, easing: "easeOutQuart" }
+            animation: { duration: 600 }
           }
         });
       }
     }
 
-    // --- Distribution des profils ---
+    // --- Distribution ---
     function updateDistribution() {
       const dist = [0, 0, 0, 0, 0];
-      participants.forEach((p) => {
-        dist[getMaturityIndex(p.globalScore)]++;
-      });
-
+      participants.forEach((p) => { dist[getMaturityIndex(parseFloat(p.globalScore) || 0)]++; });
       const ctx = document.getElementById("distChart");
       if (distChart) {
         distChart.data.datasets[0].data = dist;
@@ -871,31 +452,15 @@
             labels: MATURITY_LABELS,
             datasets: [{
               data: dist,
-              backgroundColor: [
-                "rgba(82, 190, 192, 0.4)",
-                "rgba(82, 190, 192, 0.6)",
-                "rgba(82, 190, 192, 0.8)",
-                "rgba(221, 172, 99, 0.7)",
-                "rgba(221, 172, 99, 1)"
-              ],
-              borderColor: "transparent",
-              borderRadius: 6,
-              barThickness: 36
+              backgroundColor: ["rgba(82,190,192,0.4)", "rgba(82,190,192,0.6)", "rgba(82,190,192,0.8)", "rgba(221,172,99,0.7)", "rgba(221,172,99,1)"],
+              borderColor: "transparent", borderRadius: 6, barThickness: 36
             }]
           },
           options: {
-            responsive: true,
-            maintainAspectRatio: false,
+            responsive: true, maintainAspectRatio: false,
             scales: {
-              y: {
-                beginAtZero: true,
-                ticks: { stepSize: 1, color: "#EBEBEE", font: { size: 12 } },
-                grid: { color: "rgba(74, 85, 104, 0.3)" }
-              },
-              x: {
-                ticks: { color: "#EBEBEE", font: { size: 11, family: "'Telegraf', 'Inter', sans-serif" } },
-                grid: { display: false }
-              }
+              y: { beginAtZero: true, ticks: { stepSize: 1, color: "#EBEBEE" }, grid: { color: "rgba(74,85,104,0.3)" } },
+              x: { ticks: { color: "#EBEBEE", font: { size: 11 } }, grid: { display: false } }
             },
             plugins: { legend: { display: false } },
             animation: { duration: 600 }
@@ -904,14 +469,13 @@
       }
     }
 
-    // --- Son "ding" ---
+    // --- Son ---
     function playDing() {
       try {
         if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
+        osc.connect(gain); gain.connect(audioCtx.destination);
         osc.type = "sine";
         osc.frequency.setValueAtTime(880, audioCtx.currentTime);
         osc.frequency.exponentialRampToValueAtTime(1320, audioCtx.currentTime + 0.1);
@@ -919,9 +483,7 @@
         gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
         osc.start(audioCtx.currentTime);
         osc.stop(audioCtx.currentTime + 0.5);
-      } catch (e) {
-        // Audio non supporté — on ignore
-      }
+      } catch (e) {}
     }
 
     // --- Mute ---
@@ -933,12 +495,8 @@
     });
 
     // --- QR modal ---
-    document.getElementById("showQrBtn").addEventListener("click", () => {
-      document.getElementById("qrOverlay").classList.add("active");
-    });
-    document.getElementById("qrClose").addEventListener("click", () => {
-      document.getElementById("qrOverlay").classList.remove("active");
-    });
+    document.getElementById("showQrBtn").addEventListener("click", () => document.getElementById("qrOverlay").classList.add("active"));
+    document.getElementById("qrClose").addEventListener("click", () => document.getElementById("qrOverlay").classList.remove("active"));
     document.getElementById("qrOverlay").addEventListener("click", (e) => {
       if (e.target.id === "qrOverlay") document.getElementById("qrOverlay").classList.remove("active");
     });
@@ -946,46 +504,20 @@
     // --- Export CSV ---
     document.getElementById("exportCsvBtn").addEventListener("click", () => {
       if (participants.length === 0) return;
-
       const axeIds = AXES.map((a) => a.id);
       const header = ["Prénom", ...AXES.map((a) => a.label), "Score global", "Profil"];
       const rows = participants.map((p) => [
         p.name,
-        ...axeIds.map((id) => (p.scores[id] || 0).toFixed(1)),
-        (p.globalScore || 0).toFixed(1),
+        ...axeIds.map((id) => parseFloat(p.scores[id] || 0).toFixed(1)),
+        parseFloat(p.globalScore || 0).toFixed(1),
         p.label || ""
       ]);
-
       const csv = [header, ...rows].map((r) => r.map((c) => `"${c}"`).join(",")).join("\n");
       const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
-      a.href = url;
-      a.download = `profil-ia-${sessionId}.csv`;
-      a.click();
+      a.href = url; a.download = `profil-ia-${sessionId}.csv`; a.click();
       URL.revokeObjectURL(url);
-    });
-
-    // --- Reset ---
-    const confirmOverlay = document.getElementById("confirmOverlay");
-    document.getElementById("resetBtn").addEventListener("click", () => {
-      confirmOverlay.classList.add("active");
-    });
-    document.getElementById("confirmCancel").addEventListener("click", () => {
-      confirmOverlay.classList.remove("active");
-    });
-    document.getElementById("confirmReset").addEventListener("click", async () => {
-      confirmOverlay.classList.remove("active");
-      try {
-        await remove(ref(db, `sessions/${sessionId}/participants`));
-        participants = [];
-        updateDashboard();
-      } catch (err) {
-        console.error("Erreur reset:", err);
-      }
-    });
-    confirmOverlay.addEventListener("click", (e) => {
-      if (e.target === confirmOverlay) confirmOverlay.classList.remove("active");
     });
   </script>
 </body>
