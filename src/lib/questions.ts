@@ -46,15 +46,6 @@ export const questions: Question[] = [
     placeholder: "ex. Directeur d'agence, Responsable exploitation…",
     required: true,
   },
-  {
-    id: "anciennete",
-    section: "Identité",
-    sectionNumber: 1,
-    type: "single",
-    title: "Depuis combien de temps occupez-vous ce poste ?",
-    options: ["Moins d'1 an", "1-3 ans", "3-5 ans", "Plus de 5 ans"],
-    required: true,
-  },
   // Section 2 — Votre rapport à l'IA
   {
     id: "usage_ia",

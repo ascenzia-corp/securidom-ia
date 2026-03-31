@@ -2,7 +2,6 @@ export interface QuizData {
   timestamp: string;
   nom: string;
   poste: string;
-  anciennete: string;
   usage_ia: string;
   outils_ia: string[];
   sentiment_ia: string;
@@ -25,7 +24,6 @@ export function buildPayload(
     timestamp: new Date().toISOString(),
     nom: (answers.nom as string) || "",
     poste: (answers.poste as string) || "",
-    anciennete: (answers.anciennete as string) || "",
     usage_ia: (answers.usage_ia as string) || "",
     outils_ia: Array.isArray(answers.outils_ia)
       ? (answers.outils_ia as string[])
