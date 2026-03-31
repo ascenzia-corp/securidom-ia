@@ -21,6 +21,7 @@ function doPost(e) {
       var headers = [
         "Timestamp",
         "Nom",
+        "Email",
         "Poste",
         "Usage IA",
         "Outils IA",
@@ -46,6 +47,7 @@ function doPost(e) {
     var row = [
       data.timestamp || new Date().toISOString(),
       data.nom || "",
+      data.email || "",
       data.poste || "",
       data.usage_ia || "",
       Array.isArray(data.outils_ia) ? data.outils_ia.join(", ") : (data.outils_ia || ""),

@@ -1,6 +1,7 @@
 export interface QuizData {
   timestamp: string;
   nom: string;
+  email: string;
   poste: string;
   usage_ia: string;
   outils_ia: string[];
@@ -17,12 +18,14 @@ export interface QuizData {
 export function buildPayload(
   answers: Record<string, string | string[]>
 ): QuizData {
+  const nomEmail = answers.nom_email as unknown as string[];
   const reps = answers.taches_repetitives as unknown as string[];
   const strats = answers.taches_strategiques as unknown as string[];
 
   return {
     timestamp: new Date().toISOString(),
-    nom: (answers.nom as string) || "",
+    nom: Array.isArray(nomEmail) ? nomEmail[0] || "" : "",
+    email: Array.isArray(nomEmail) ? nomEmail[1] || "" : "",
     poste: (answers.poste as string) || "",
     usage_ia: (answers.usage_ia as string) || "",
     outils_ia: Array.isArray(answers.outils_ia)

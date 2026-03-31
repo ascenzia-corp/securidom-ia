@@ -86,7 +86,8 @@ export default function Quiz() {
     [currentQuestion]
   );
 
-  const firstName = ((answers.nom as string) || "").split(" ")[0] || "";
+  const nomEmail = answers.nom_email as unknown as string[];
+  const firstName = (Array.isArray(nomEmail) ? nomEmail[0] || "" : "").split(" ")[0] || "";
 
   // Welcome Screen
   if (screen === "welcome") {

@@ -284,7 +284,7 @@ export default function QuestionRenderer({
           <div className="space-y-3">
             <div>
               <label className="text-xs text-[#A0AEC0] mb-1 block">
-                Tâche 1
+                {question.label1 || "Tâche 1"}
               </label>
               <input
                 type="text"
@@ -298,10 +298,10 @@ export default function QuestionRenderer({
             </div>
             <div>
               <label className="text-xs text-[#A0AEC0] mb-1 block">
-                Tâche 2
+                {question.label2 || "Tâche 2"}
               </label>
               <input
-                type="text"
+                type={question.label2?.toLowerCase().includes("email") ? "email" : "text"}
                 value={vals[1] || ""}
                 onChange={(e) => onChange([vals[0] || "", e.target.value])}
                 placeholder={question.placeholder2 || question.placeholder}

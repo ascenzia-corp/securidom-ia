@@ -17,6 +17,8 @@ export interface Question {
   examples?: string;
   placeholder?: string;
   placeholder2?: string;
+  label1?: string;
+  label2?: string;
   options?: string[];
   scaleLabels?: { emoji: string; label: string }[];
   maxSelections?: number;
@@ -29,12 +31,15 @@ export interface Question {
 export const questions: Question[] = [
   // Section 1 — Identité
   {
-    id: "nom",
+    id: "nom_email",
     section: "Identité",
     sectionNumber: 1,
-    type: "text",
-    title: "Prénom et Nom",
+    type: "dual-text",
+    title: "Prénom, Nom et Email",
+    label1: "Prénom et Nom",
+    label2: "Email professionnel",
     placeholder: "Votre prénom et nom",
+    placeholder2: "prenom.nom@securidom.fr",
     required: true,
   },
   {
