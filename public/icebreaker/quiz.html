@@ -279,9 +279,13 @@
     let app, db;
     let firebaseOk = false;
     try {
-      app = initializeApp(firebaseConfig);
-      db = getDatabase(app);
-      firebaseOk = true;
+      if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "VOTRE_API_KEY") {
+        app = initializeApp(firebaseConfig);
+        db = getDatabase(app);
+        firebaseOk = true;
+      } else {
+        console.warn("Firebase non configuré");
+      }
     } catch (err) {
       console.error("Erreur Firebase:", err);
     }

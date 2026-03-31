@@ -562,13 +562,17 @@
     let app, db;
     let firebaseOk = false;
     try {
-      app = initializeApp(firebaseConfig);
-      db = getDatabase(app);
-      firebaseOk = true;
-      console.log("Firebase initialisé avec succès");
+      // Vérifier que la config n'a pas les valeurs placeholder
+      if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "VOTRE_API_KEY") {
+        app = initializeApp(firebaseConfig);
+        db = getDatabase(app);
+        firebaseOk = true;
+        console.log("Firebase initialisé avec succès");
+      } else {
+        console.warn("Firebase non configuré — les valeurs sont encore des placeholders");
+      }
     } catch (err) {
       console.error("Erreur d'initialisation Firebase:", err);
-      alert("Erreur Firebase : vérifiez votre configuration dans js/firebase-config.js\n\n" + err.message);
     }
 
     // --- État ---
@@ -610,19 +614,13 @@
       }
       sessionId = sid;
 
-      // Créer la session dans Firebase
+      // Créer la session dans Firebase (non-bloquant)
       if (firebaseOk) {
-        try {
-          await set(ref(db, `sessions/${sessionId}/metadata`), {
-            createdAt: Date.now(),
-            name: sessionId,
-            active: true
-          });
-        } catch (err) {
-          console.error("Erreur création session:", err);
-          alert("Erreur de connexion à Firebase. Vérifiez la configuration.\n\n" + err.message);
-          return;
-        }
+        set(ref(db, `sessions/${sessionId}/metadata`), {
+          createdAt: Date.now(),
+          name: sessionId,
+          active: true
+        }).catch(err => console.error("Erreur création session:", err));
       }
 
       startDashboard();
