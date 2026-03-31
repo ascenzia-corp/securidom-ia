@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mon Profil IA — Résultat</title>
+  <link href="https://fonts.cdnfonts.com/css/telegraf" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Telegraf', 'Inter', -apple-system, sans-serif;
+      background: linear-gradient(135deg, #1A202C 0%, #2D3748 100%);
+      color: #EBEBEE;
+      min-height: 100dvh;
+      padding: 24px;
+    }
+
+    .wrapper {
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .logo { height: 36px; opacity: 0.9; }
+
+    .title {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .title h1 {
+      font-size: 1.8rem;
+      color: #DDAC63;
+      margin-bottom: 4px;
+    }
+
+    .title p {
+      color: #A0AEC0;
+      font-size: 0.9rem;
+    }
+
+    /* Radar chart */
+    .radar-card {
+      background: #2D3748;
+      border: 1px solid #4A5568;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+      margin-bottom: 24px;
+    }
+
+    .radar-canvas {
+      max-width: 100%;
+      margin: 0 auto;
+    }
+
+    /* Score global */
+    .score-global {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .score-number {
+      font-size: 3.5rem;
+      font-weight: 800;
+      color: #DDAC63;
+      line-height: 1;
+    }
+
+    .score-sub {
+      font-size: 1.1rem;
+      color: #A0AEC0;
+    }
+
+    .score-label {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 6px 16px;
+      background: rgba(221, 172, 99, 0.15);
+      border: 1px solid rgba(221, 172, 99, 0.3);
+      border-radius: 20px;
+      color: #DDAC63;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    .score-message {
+      margin-top: 12px;
+      color: #EBEBEE;
+      font-size: 0.95rem;
+      opacity: 0.8;
+      line-height: 1.5;
+    }
+
+    /* Axes détail */
+    .axes {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .axe-card {
+      background: #2D3748;
+      border: 1px solid #4A5568;
+      border-radius: 12px;
+      padding: 16px 20px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+    }
+
+    .axe-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .axe-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .axe-score {
+      color: #DDAC63;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .axe-bar {
+      height: 6px;
+      background: #1A202C;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .axe-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.8s ease;
+    }
+
+    /* Bouton retour */
+    .footer {
+      text-align: center;
+      padding-top: 8px;
+      padding-bottom: 24px;
+    }
+
+    .footer a {
+      color: #A0AEC0;
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+
+    .footer a:hover { color: #EBEBEE; }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="header">
+      <img src="https://www.ascenzia.fr/hubfs/Corporate/Logos/PNG/logo_ascenzia_fond_sombre.png" alt="Ascenzia" class="logo">
+    </div>
+
+    <div class="title">
+      <h1 id="titleText">Bravo !</h1>
+      <p>Voici votre profil IA</p>
+    </div>
+
+    <div class="radar-card">
+      <canvas id="radarChart" class="radar-canvas"></canvas>
+    </div>
+
+    <div class="score-global">
+      <div class="score-number" id="scoreNumber">—</div>
+      <div class="score-sub">sur 100</div>
+      <div class="score-label" id="scoreLabel">—</div>
+      <p class="score-message" id="scoreMessage"></p>
+    </div>
+
+    <div class="axes" id="axesList"></div>
+
+    <div class="footer">
+      <a href="index.html" id="backLink">← Retour à l'accueil</a>
+    </div>
+  </div>
+
+  <script type="module">
+    import { AXES, computeScores, computeGlobal, getLabel } from "./js/scoring.js";
+
+    // Récupérer les résultats depuis sessionStorage
+    const raw = sessionStorage.getItem("icebreaker_result");
+    if (!raw) {
+      window.location.href = "index.html";
+    }
+
+    const data = JSON.parse(raw);
+    const { name, scores, globalScore } = data;
+    const { label, message } = getLabel(globalScore);
+
+    // Session pour le lien retour
+    const params = new URLSearchParams(window.location.search);
+    const sessionId = params.get("session");
+    if (sessionId) {
+      document.getElementById("backLink").href = `index.html?session=${encodeURIComponent(sessionId)}`;
+    }
+
+    // Titre personnalisé
+    document.getElementById("titleText").textContent = `Bravo ${name} !`;
+
+    // Score global
+    const scoreDisplay = Math.round(globalScore * 20);
+    document.getElementById("scoreNumber").textContent = scoreDisplay;
+    document.getElementById("scoreLabel").textContent = label;
+    document.getElementById("scoreMessage").textContent = message;
+
+    // Radar chart
+    const ctx = document.getElementById("radarChart").getContext("2d");
+    const labels = AXES.map((a) => a.label);
+    const chartData = AXES.map((a) => scores[a.id] || 0);
+
+    new Chart(ctx, {
+      type: "radar",
+      data: {
+        labels,
+        datasets: [{
+          label: "Mon profil",
+          data: chartData,
+          backgroundColor: "rgba(82, 190, 192, 0.3)",
+          borderColor: "#52BEC0",
+          borderWidth: 2,
+          pointBackgroundColor: "#52BEC0",
+          pointBorderColor: "#52BEC0",
+          pointRadius: 5
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        scales: {
+          r: {
+            beginAtZero: true,
+            min: 0,
+            max: 5,
+            ticks: {
+              stepSize: 1,
+              color: "#EBEBEE",
+              backdropColor: "transparent",
+              font: { size: 11 }
+            },
+            grid: { color: "#4A5568" },
+            angleLines: { color: "#4A5568" },
+            pointLabels: {
+              color: "#EBEBEE",
+              font: { size: 13, family: "'Telegraf', 'Inter', sans-serif" }
+            }
+          }
+        },
+        plugins: { legend: { display: false } },
+        animation: { duration: 800, easing: "easeOutQuart" }
+      }
+    });
+
+    // Barres par axe
+    const axesList = document.getElementById("axesList");
+    AXES.forEach((axe) => {
+      const score = scores[axe.id] || 0;
+      const pct = (score / 5) * 100;
+      // Dégradé de teal à or selon le score
+      const ratio = score / 5;
+      const r = Math.round(82 + (221 - 82) * ratio);
+      const g = Math.round(190 + (172 - 190) * ratio);
+      const b = Math.round(192 + (99 - 192) * ratio);
+      const color = `rgb(${r}, ${g}, ${b})`;
+
+      const card = document.createElement("div");
+      card.className = "axe-card";
+      card.innerHTML = `
+        <div class="axe-header">
+          <span class="axe-name">${axe.label}</span>
+          <span class="axe-score">${score.toFixed(1)} / 5</span>
+        </div>
+        <div class="axe-bar">
+          <div class="axe-bar-fill" style="width: ${pct}%; background: ${color};"></div>
+        </div>
+      `;
+      axesList.appendChild(card);
+    });
+  </script>
+</body>
+</html>

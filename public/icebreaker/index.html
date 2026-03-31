@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mon Profil IA — Ice Breaker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.cdnfonts.com/css/telegraf" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Telegraf', 'Inter', -apple-system, sans-serif;
+      background: linear-gradient(135deg, #1A202C 0%, #2D3748 100%);
+      color: #EBEBEE;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 440px;
+      text-align: center;
+    }
+
+    .logo {
+      height: 40px;
+      margin-bottom: 32px;
+      opacity: 0.9;
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #DDAC63;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      color: #EBEBEE;
+      font-size: 1rem;
+      margin-bottom: 40px;
+      opacity: 0.8;
+    }
+
+    .cards {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .card {
+      background: #2D3748;
+      border: 1px solid #4A5568;
+      border-radius: 12px;
+      padding: 28px 24px;
+      cursor: pointer;
+      text-decoration: none;
+      color: #EBEBEE;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+    }
+
+    .card:hover {
+      border-color: #DDAC63;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+
+    .card h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #DDAC63;
+      margin-bottom: 6px;
+    }
+
+    .card p {
+      font-size: 0.875rem;
+      opacity: 0.7;
+    }
+
+    /* Modal pour le code formateur */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .modal-overlay.active { display: flex; }
+
+    .modal {
+      background: #2D3748;
+      border: 1px solid #4A5568;
+      border-radius: 12px;
+      padding: 32px;
+      width: 100%;
+      max-width: 360px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+    }
+
+    .modal h3 {
+      color: #DDAC63;
+      margin-bottom: 16px;
+      font-size: 1.1rem;
+    }
+
+    .modal input {
+      width: 100%;
+      padding: 12px 16px;
+      background: #1A202C;
+      border: 1px solid #4A5568;
+      border-radius: 8px;
+      color: #EBEBEE;
+      font-size: 1rem;
+      font-family: inherit;
+      outline: none;
+      margin-bottom: 8px;
+      transition: border-color 0.2s;
+    }
+
+    .modal input:focus { border-color: #DDAC63; }
+
+    .modal .error {
+      color: #E53E3E;
+      font-size: 0.8rem;
+      margin-bottom: 12px;
+      display: none;
+    }
+
+    .modal .error.visible { display: block; }
+
+    .btn {
+      display: inline-block;
+      padding: 12px 24px;
+      background: #DDAC63;
+      color: #1A202C;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.2s;
+      width: 100%;
+    }
+
+    .btn:hover { background: #B8860B; }
+
+    .btn-cancel {
+      background: transparent;
+      color: #A0AEC0;
+      margin-top: 8px;
+      font-size: 0.875rem;
+    }
+
+    .btn-cancel:hover { background: transparent; color: #EBEBEE; }
+
+    /* Session input */
+    .session-field {
+      margin-bottom: 24px;
+    }
+
+    .session-field label {
+      display: block;
+      font-size: 0.8rem;
+      color: #A0AEC0;
+      margin-bottom: 6px;
+      text-align: left;
+    }
+
+    .session-field input {
+      width: 100%;
+      padding: 12px 16px;
+      background: #1A202C;
+      border: 1px solid #4A5568;
+      border-radius: 8px;
+      color: #EBEBEE;
+      font-size: 1rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .session-field input:focus { border-color: #DDAC63; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img src="https://www.ascenzia.fr/hubfs/Corporate/Logos/PNG/logo_ascenzia_fond_sombre.png" alt="Ascenzia" class="logo">
+
+    <h1>Mon Profil IA</h1>
+    <p class="subtitle">Ice Breaker — Formation Cadres Augmentés</p>
+
+    <div class="session-field">
+      <label for="sessionInput">Code de session</label>
+      <input type="text" id="sessionInput" placeholder="ex. securidom-2026-04">
+    </div>
+
+    <div class="cards">
+      <a class="card" id="participantCard" href="#">
+        <h2>👤 Je suis participant</h2>
+        <p>Répondez au questionnaire et découvrez votre profil IA</p>
+      </a>
+
+      <a class="card" id="formateurCard" href="#">
+        <h2>🎓 Je suis formateur</h2>
+        <p>Accédez au dashboard en temps réel</p>
+      </a>
+    </div>
+  </div>
+
+  <!-- Modal code formateur -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <h3>Code d'accès formateur</h3>
+      <input type="password" id="codeInput" placeholder="Entrez le code…" autocomplete="off">
+      <p class="error" id="codeError">Code incorrect. Réessayez.</p>
+      <button class="btn" id="codeSubmit">Valider</button>
+      <button class="btn btn-cancel" id="codeCancel">Annuler</button>
+    </div>
+  </div>
+
+  <script>
+    const CODE_FORMATEUR = "ascenzia2026";
+
+    // Récupérer la session depuis l'URL
+    const params = new URLSearchParams(window.location.search);
+    const sessionFromUrl = params.get("session") || "";
+    const sessionInput = document.getElementById("sessionInput");
+    if (sessionFromUrl) sessionInput.value = sessionFromUrl;
+
+    // Participant → quiz
+    document.getElementById("participantCard").addEventListener("click", (e) => {
+      e.preventDefault();
+      const session = sessionInput.value.trim();
+      if (!session) {
+        sessionInput.style.borderColor = "#E53E3E";
+        sessionInput.focus();
+        return;
+      }
+      window.location.href = `quiz.html?session=${encodeURIComponent(session)}`;
+    });
+
+    // Formateur → modal code
+    const overlay = document.getElementById("modalOverlay");
+    const codeInput = document.getElementById("codeInput");
+    const codeError = document.getElementById("codeError");
+
+    document.getElementById("formateurCard").addEventListener("click", (e) => {
+      e.preventDefault();
+      overlay.classList.add("active");
+      codeInput.focus();
+    });
+
+    document.getElementById("codeCancel").addEventListener("click", () => {
+      overlay.classList.remove("active");
+      codeInput.value = "";
+      codeError.classList.remove("visible");
+    });
+
+    document.getElementById("codeSubmit").addEventListener("click", validateCode);
+    codeInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") validateCode();
+    });
+
+    function validateCode() {
+      if (codeInput.value === CODE_FORMATEUR) {
+        const session = sessionInput.value.trim();
+        const qs = session ? `?session=${encodeURIComponent(session)}` : "";
+        window.location.href = `dashboard.html${qs}`;
+      } else {
+        codeError.classList.add("visible");
+        codeInput.value = "";
+        codeInput.focus();
+      }
+    }
+
+    // Fermer modal en cliquant en dehors
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) {
+        overlay.classList.remove("active");
+        codeInput.value = "";
+        codeError.classList.remove("visible");
+      }
+    });
+  </script>
+</body>
+</html>
