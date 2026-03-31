@@ -8,6 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+  <script>window.__QRCode = QRCode;</script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -668,7 +669,7 @@
       const quizUrl = `${baseUrl}quiz.html?session=${encodeURIComponent(sessionId)}`;
 
       // QR dans l'état vide
-      QRCode.toCanvas(document.getElementById("qrCode"), quizUrl, {
+      window.__QRCode.toCanvas(document.getElementById("qrCode"), quizUrl, {
         width: 300,
         margin: 2,
         color: { dark: "#1A202C", light: "#FFFFFF" }
@@ -679,7 +680,7 @@
       const modalCanvas = document.createElement("canvas");
       document.getElementById("qrContainerModal").innerHTML = "";
       document.getElementById("qrContainerModal").appendChild(modalCanvas);
-      QRCode.toCanvas(modalCanvas, quizUrl, {
+      window.__QRCode.toCanvas(modalCanvas, quizUrl, {
         width: 300,
         margin: 2,
         color: { dark: "#1A202C", light: "#FFFFFF" }
