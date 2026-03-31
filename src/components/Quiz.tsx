@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { questions } from "@/lib/questions";
 import { buildPayload, submitToGoogleSheets } from "@/lib/submit";
 import AscenziaLogo from "./AscenziaLogo";
+import SecuridomLogo from "./SecuridomLogo";
 import ProgressBar from "./ProgressBar";
 import QuestionRenderer from "./QuestionRenderer";
 
@@ -90,14 +91,20 @@ export default function Quiz() {
   // Welcome Screen
   if (screen === "welcome") {
     return (
-      <div className="min-h-[100dvh] flex flex-col items-center justify-center px-6">
+      <div className="min-h-[100dvh] flex flex-col px-6">
+        {/* Header logos */}
+        <div className="flex items-center justify-between pt-6 pb-2">
+          <AscenziaLogo className="h-8 opacity-70" />
+          <SecuridomLogo className="h-8 opacity-70" />
+        </div>
+
+        <div className="flex-1 flex flex-col items-center justify-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
           className="w-full max-w-md text-center space-y-8"
         >
-          <AscenziaLogo className="h-8 mx-auto opacity-70" />
 
           <div className="space-y-4">
             <h1 className="text-3xl sm:text-4xl font-bold tracking-tight"
@@ -124,6 +131,7 @@ export default function Quiz() {
             Formation Cadres Augmentés — Sécuridom · Martinique
           </p>
         </motion.div>
+        </div>
       </div>
     );
   }
@@ -131,7 +139,14 @@ export default function Quiz() {
   // Confirmation Screen
   if (screen === "confirmation") {
     return (
-      <div className="min-h-[100dvh] flex flex-col items-center justify-center px-6">
+      <div className="min-h-[100dvh] flex flex-col px-6">
+        {/* Header logos */}
+        <div className="flex items-center justify-between pt-6 pb-2">
+          <AscenziaLogo className="h-8 opacity-70" />
+          <SecuridomLogo className="h-8 opacity-70" />
+        </div>
+
+        <div className="flex-1 flex flex-col items-center justify-center">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -197,6 +212,7 @@ export default function Quiz() {
             <p className="text-xs text-[#A0AEC0]/50">ascenzia.ai</p>
           </motion.div>
         </motion.div>
+        </div>
       </div>
     );
   }
@@ -211,10 +227,8 @@ export default function Quiz() {
     <div className="min-h-[100dvh] flex flex-col px-6 py-6 max-w-lg mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <AscenziaLogo className="h-6 opacity-60" />
-        <span className="text-xs text-[#A0AEC0]/60">
-          Section {currentQuestion.sectionNumber}/5
-        </span>
+        <AscenziaLogo className="h-7 opacity-60" />
+        <SecuridomLogo className="h-7 opacity-60" />
       </div>
 
       {/* Progress */}
