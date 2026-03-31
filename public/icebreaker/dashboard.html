@@ -7,8 +7,6 @@
   <link href="https://fonts.cdnfonts.com/css/telegraf" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
-  <script>window.__QRCode = QRCode;</script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -484,7 +482,7 @@
       <h2>En attente de participants…</h2>
       <p>Partagez ce QR code pour que les participants rejoignent la session</p>
       <div class="qr-container" id="qrContainer">
-        <canvas id="qrCode"></canvas>
+        <img id="qrCode" width="300" height="300" alt="QR Code">
       </div>
       <p class="share-url" id="shareUrl"></p>
     </div>
@@ -667,24 +665,14 @@
     function generateQRCodes() {
       const baseUrl = window.location.origin + window.location.pathname.replace("dashboard.html", "");
       const quizUrl = `${baseUrl}quiz.html?session=${encodeURIComponent(sessionId)}`;
+      const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(quizUrl)}&color=1A202C&bgcolor=FFFFFF`;
 
       // QR dans l'état vide
-      window.__QRCode.toCanvas(document.getElementById("qrCode"), quizUrl, {
-        width: 300,
-        margin: 2,
-        color: { dark: "#1A202C", light: "#FFFFFF" }
-      });
+      document.getElementById("qrCode").src = qrApiUrl;
       document.getElementById("shareUrl").textContent = quizUrl;
 
       // QR dans la modal
-      const modalCanvas = document.createElement("canvas");
-      document.getElementById("qrContainerModal").innerHTML = "";
-      document.getElementById("qrContainerModal").appendChild(modalCanvas);
-      window.__QRCode.toCanvas(modalCanvas, quizUrl, {
-        width: 300,
-        margin: 2,
-        color: { dark: "#1A202C", light: "#FFFFFF" }
-      });
+      document.getElementById("qrContainerModal").innerHTML = `<img src="${qrApiUrl}" width="300" height="300" alt="QR Code">`;
       document.getElementById("shareUrlModal").textContent = quizUrl;
     }
 
