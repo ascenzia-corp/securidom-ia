@@ -558,9 +558,18 @@
     import { firebaseConfig } from "./js/firebase-config.js";
     import { AXES, computeScores, computeGlobal, getLabel, getMaturityIndex, MATURITY_LABELS } from "./js/scoring.js";
 
-    // --- Init Firebase ---
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
+    // --- Init Firebase (avec gestion d'erreur) ---
+    let app, db;
+    let firebaseOk = false;
+    try {
+      app = initializeApp(firebaseConfig);
+      db = getDatabase(app);
+      firebaseOk = true;
+      console.log("Firebase initialisé avec succès");
+    } catch (err) {
+      console.error("Erreur d'initialisation Firebase:", err);
+      alert("Erreur Firebase : vérifiez votre configuration dans js/firebase-config.js\n\n" + err.message);
+    }
 
     // --- État ---
     let sessionId = "";
@@ -602,14 +611,18 @@
       sessionId = sid;
 
       // Créer la session dans Firebase
-      try {
-        await set(ref(db, `sessions/${sessionId}/metadata`), {
-          createdAt: Date.now(),
-          name: sessionId,
-          active: true
-        });
-      } catch (err) {
-        console.error("Erreur création session:", err);
+      if (firebaseOk) {
+        try {
+          await set(ref(db, `sessions/${sessionId}/metadata`), {
+            createdAt: Date.now(),
+            name: sessionId,
+            active: true
+          });
+        } catch (err) {
+          console.error("Erreur création session:", err);
+          alert("Erreur de connexion à Firebase. Vérifiez la configuration.\n\n" + err.message);
+          return;
+        }
       }
 
       startDashboard();

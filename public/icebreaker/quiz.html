@@ -275,9 +275,16 @@
     import { firebaseConfig } from "./js/firebase-config.js";
     import { QUESTIONS, AXES, computeScores, computeGlobal, getLabel } from "./js/scoring.js";
 
-    // --- Init Firebase ---
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
+    // --- Init Firebase (avec gestion d'erreur) ---
+    let app, db;
+    let firebaseOk = false;
+    try {
+      app = initializeApp(firebaseConfig);
+      db = getDatabase(app);
+      firebaseOk = true;
+    } catch (err) {
+      console.error("Erreur Firebase:", err);
+    }
 
     // --- Session ---
     const params = new URLSearchParams(window.location.search);
@@ -429,8 +436,10 @@
       sessionStorage.setItem("icebreaker_result", JSON.stringify(data));
 
       try {
-        const participantRef = push(ref(db, `sessions/${sessionId}/participants`));
-        await set(participantRef, data);
+        if (firebaseOk) {
+          const participantRef = push(ref(db, `sessions/${sessionId}/participants`));
+          await set(participantRef, data);
+        }
       } catch (err) {
         console.error("Erreur Firebase:", err);
         // On continue quand même vers les résultats
