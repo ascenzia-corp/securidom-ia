@@ -309,16 +309,9 @@
 
     // --- Polling Google Sheets ---
     async function fetchParticipants() {
-      if (!WEBHOOK_URL || WEBHOOK_URL === "VOTRE_WEBHOOK_URL") {
-        statusDot.className = "status-dot";
-        statusDot.style.background = "#E53E3E";
-        statusText.textContent = "Webhook non configuré";
-        return;
-      }
-
       try {
         statusDot.className = "status-dot loading";
-        const url = `${WEBHOOK_URL}?session=${encodeURIComponent(sessionId)}`;
+        const url = `/api/icebreaker?session=${encodeURIComponent(sessionId)}`;
         const resp = await fetch(url);
         const json = await resp.json();
 
