@@ -96,7 +96,6 @@
 </div>
 <script type="module">
   import { QUESTIONS, MODULES, computeScore, computeModuleScores, getResultMessage } from "./js/questions.js";
-  import { WEBHOOK_URL } from "./js/config.js";
 
   const params = new URLSearchParams(window.location.search);
   const sessionId = params.get("session");
@@ -226,12 +225,14 @@
       selectedAnswers: answers
     }));
 
-    // Envoyer au webhook
-    if (WEBHOOK_URL && WEBHOOK_URL !== "VOTRE_WEBHOOK_URL") {
-      try {
-        await fetch(WEBHOOK_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
-      } catch (e) { console.error("Erreur envoi:", e); }
-    }
+    // Envoyer via le proxy API (évite les problèmes CORS)
+    try {
+      await fetch("/api/evaluation/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+    } catch (e) { console.error("Erreur envoi:", e); }
 
     // Afficher résultat
     showResult(score, pct, msg, moduleScores);
