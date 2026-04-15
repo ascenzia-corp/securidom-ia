@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Formateur — Quiz Évaluation</title>
+  <link href="https://fonts.cdnfonts.com/css/telegraf" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Telegraf','Inter',-apple-system,sans-serif;background:linear-gradient(135deg,#1A202C 0%,#2D3748 100%);color:#EBEBEE;min-height:100vh}
+    /* Setup */
+    .setup{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+    .setup.hidden{display:none}
+    .setup-card{background:#2D3748;border:1px solid #4A5568;border-radius:12px;padding:40px;max-width:500px;width:100%;text-align:center;box-shadow:0 4px 24px rgba(0,0,0,.3)}
+    .setup-card .logo{height:40px;margin-bottom:24px;opacity:.9}
+    .setup-card h1{color:#DDAC63;font-size:1.5rem;margin-bottom:8px}
+    .setup-card .sub{color:#A0AEC0;font-size:.9rem;margin-bottom:24px}
+    .setup-card label{display:block;text-align:left;font-size:.8rem;color:#A0AEC0;margin-bottom:6px}
+    .setup-card input{width:100%;padding:12px 16px;background:#1A202C;border:1px solid #4A5568;border-radius:8px;color:#EBEBEE;font-size:1rem;font-family:inherit;outline:none;margin-bottom:16px}
+    .setup-card input:focus{border-color:#DDAC63}
+    .btn{display:inline-block;padding:12px 24px;background:#DDAC63;color:#1A202C;border:none;border-radius:8px;font-size:1rem;font-weight:600;font-family:inherit;cursor:pointer;transition:background .2s;width:100%}
+    .btn:hover{background:#B8860B}
+    .btn-sm{padding:8px 16px;font-size:.85rem;width:auto}
+    .btn-outline{background:transparent;border:1px solid #4A5568;color:#EBEBEE;margin-top:10px}
+    .btn-outline:hover{border-color:#DDAC63;background:rgba(221,172,99,.1)}
+    /* Dashboard */
+    .dash{display:none;min-height:100vh;flex-direction:column}
+    .dash.active{display:flex}
+    .dash-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 32px;border-bottom:1px solid #4A5568}
+    .dash-hd .logo{height:32px;opacity:.8}
+    .dash-hd h1{color:#DDAC63;font-size:1.2rem;font-weight:700}
+    .hd-right{display:flex;align-items:center;gap:16px}
+    .status{font-size:.75rem;color:#A0AEC0}
+    .status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px}
+    .status-dot.ok{background:#48BB78}
+    .status-dot.loading{background:#DDAC63;animation:pulse 1s infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+    .pill{display:flex;align-items:center;gap:8px;background:rgba(221,172,99,.1);border:1px solid rgba(221,172,99,.3);border-radius:20px;padding:6px 16px;font-weight:600;color:#DDAC63}
+    .pill.bounce{animation:bounce .4s ease}
+    @keyframes bounce{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+    /* Main */
+    .dash-main{flex:1;display:grid;grid-template-columns:340px 1fr;gap:24px;padding:24px 32px;overflow:auto}
+    .col-qr{display:flex;flex-direction:column;align-items:center;gap:16px}
+    .qr-box{background:white;border-radius:12px;padding:16px;display:inline-block}
+    .qr-url{font-size:.7rem;color:#A0AEC0;word-break:break-all;text-align:center;max-width:300px}
+    .big-score{text-align:center;margin-top:16px}
+    .big-score .num{font-size:3.5rem;font-weight:800;color:#DDAC63;line-height:1}
+    .big-score .lbl{color:#A0AEC0;font-size:.85rem}
+    .participants-list{width:100%;margin-top:8px}
+    .participants-list h3{color:#DDAC63;font-size:.85rem;margin-bottom:8px}
+    .p-item{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #4A556830;font-size:.85rem}
+    .p-item .name{color:#EBEBEE}
+    .p-item .sc{color:#DDAC63;font-weight:600}
+    .col-charts{display:flex;flex-direction:column;gap:20px}
+    .card{background:#2D3748;border:1px solid #4A5568;border-radius:12px;padding:20px;box-shadow:0 4px 24px rgba(0,0,0,.3)}
+    .card h3{color:#DDAC63;font-size:.9rem;font-weight:600;margin-bottom:12px}
+    .chart-container{height:200px;position:relative}
+    .heatmap{display:flex;flex-direction:column;gap:6px}
+    .hm-row{display:flex;align-items:center;gap:8px}
+    .hm-label{width:30px;font-size:.75rem;color:#A0AEC0;text-align:right;flex-shrink:0}
+    .hm-bar-bg{flex:1;height:16px;background:#1A202C;border-radius:4px;overflow:hidden;position:relative}
+    .hm-bar-fill{height:100%;border-radius:4px;transition:width .6s}
+    .hm-val{width:40px;font-size:.75rem;color:#EBEBEE;text-align:right}
+    /* Footer */
+    .dash-ft{display:flex;align-items:center;justify-content:space-between;padding:12px 32px;border-top:1px solid #4A5568}
+    .ft-text{color:#4A5568;font-size:.75rem}
+    .ft-actions{display:flex;gap:8px}
+    /* Empty state */
+    .empty{text-align:center;padding:48px;grid-column:1/-1}
+    .empty h2{color:#DDAC63;margin-bottom:12px}
+    .empty p{color:#A0AEC0;font-size:.9rem}
+    /* Responsive */
+    @media(max-width:900px){.dash-main{grid-template-columns:1fr;padding:16px}.dash-hd,.dash-ft{padding:12px 16px}}
+    /* Modal QR */
+    .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;align-items:center;justify-content:center}
+    .overlay.active{display:flex}
+    .overlay-box{background:#2D3748;border:1px solid #4A5568;border-radius:12px;padding:32px;max-width:420px;text-align:center}
+    .overlay-box h3{color:#DDAC63;margin-bottom:16px}
+  </style>
+</head>
+<body>
+  <!-- Setup -->
+  <div class="setup" id="setup">
+    <div class="setup-card">
+      <img src="https://www.ascenzia.fr/hubfs/Corporate/Logos/PNG/logo_ascenzia_fond_sombre.png" alt="Ascenzia" class="logo">
+      <h1>Dashboard Évaluation</h1>
+      <p class="sub">Projetez cette page pour suivre les résultats en direct</p>
+      <label for="sInput">Code de session</label>
+      <input type="text" id="sInput" placeholder="ex. securidom-eval-01">
+      <button class="btn" id="startBtn">Lancer le dashboard</button>
+    </div>
+  </div>
+
+  <!-- Dashboard -->
+  <div class="dash" id="dash">
+    <div class="dash-hd">
+      <img src="https://www.ascenzia.fr/hubfs/Corporate/Logos/PNG/logo_ascenzia_fond_sombre.png" alt="Ascenzia" class="logo">
+      <h1>Quiz d'évaluation — Résultats en direct</h1>
+      <div class="hd-right">
+        <span class="status"><span class="status-dot loading" id="sDot"></span><span id="sTxt">Connexion…</span></span>
+        <div class="pill" id="pill"><span id="cnt">0</span> participants</div>
+      </div>
+    </div>
+
+    <div class="dash-main" id="mainContent">
+      <!-- QR + classement -->
+      <div class="col-qr" id="colQr">
+        <div class="qr-box"><img id="qrImg" width="280" height="280" alt="QR"></div>
+        <p class="qr-url" id="qrUrl"></p>
+        <div class="big-score">
+          <div class="num" id="avgScore">—</div>
+          <div class="lbl">Score moyen</div>
+        </div>
+        <div class="participants-list">
+          <h3>Classement</h3>
+          <div id="pList"></div>
+        </div>
+      </div>
+      <!-- Charts -->
+      <div class="col-charts" id="colCharts">
+        <div class="card">
+          <h3>Réussite par module</h3>
+          <div class="chart-container"><canvas id="modChart"></canvas></div>
+        </div>
+        <div class="card">
+          <h3>Taux de réussite par question</h3>
+          <div class="heatmap" id="heatmap"></div>
+        </div>
+      </div>
+      <!-- Empty -->
+      <div class="empty" id="emptyState">
+        <h2>En attente de participants…</h2>
+        <p>Les résultats apparaîtront automatiquement</p>
+      </div>
+    </div>
+
+    <div class="dash-ft">
+      <span class="ft-text">Ascenzia — Formation Cadres Augmentés par l'IA © 2026</span>
+      <div class="ft-actions">
+        <button class="btn btn-sm btn-outline" id="qrBtn">QR Code</button>
+        <button class="btn btn-sm btn-outline" id="csvBtn">Exporter CSV</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal QR -->
+  <div class="overlay" id="qrOverlay">
+    <div class="overlay-box">
+      <h3>Partagez ce QR Code</h3>
+      <div class="qr-box" id="qrModal"></div>
+      <p class="qr-url" id="qrUrlModal" style="margin:12px 0"></p>
+      <button class="btn btn-sm btn-outline" id="qrClose">Fermer</button>
+    </div>
+  </div>
+
+<script type="module">
+  import { QUESTIONS, MODULES } from "./js/questions.js";
+
+  let sessionId = "";
+  let participants = [];
+  let prevCount = 0;
+  let modChart = null;
+  let audioCtx = null;
+
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("session")) document.getElementById("sInput").value = params.get("session");
+
+  document.getElementById("startBtn").addEventListener("click", () => {
+    let s = document.getElementById("sInput").value.trim();
+    if (!s) { s = `eval-${new Date().toISOString().slice(0,10)}`; document.getElementById("sInput").value = s; }
+    sessionId = s;
+    document.getElementById("setup").classList.add("hidden");
+    document.getElementById("dash").classList.add("active");
+    window.history.replaceState({}, "", `?session=${encodeURIComponent(sessionId)}`);
+    generateQR();
+    fetchResults();
+    setInterval(fetchResults, 5000);
+  });
+
+  function generateQR() {
+    const base = window.location.origin + window.location.pathname.replace("admin.html", "");
+    const url = `${base}quiz.html?session=${encodeURIComponent(sessionId)}`;
+    const api = `https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=${encodeURIComponent(url)}&color=1A202C&bgcolor=FFFFFF`;
+    document.getElementById("qrImg").src = api;
+    document.getElementById("qrUrl").textContent = url;
+    document.getElementById("qrModal").innerHTML = `<img src="${api}" width="280" height="280" alt="QR">`;
+    document.getElementById("qrUrlModal").textContent = url;
+  }
+
+  async function fetchResults() {
+    try {
+      document.getElementById("sDot").className = "status-dot loading";
+      const r = await fetch(`/api/evaluation/results?session=${encodeURIComponent(sessionId)}`);
+      const json = await r.json();
+      document.getElementById("sDot").className = "status-dot ok";
+      document.getElementById("sTxt").textContent = "Connecté";
+      if (json.status === "ok" && Array.isArray(json.participants)) {
+        const n = json.participants.length;
+        if (n > prevCount && prevCount > 0) { playDing(); animPill(); }
+        prevCount = n;
+        participants = json.participants;
+        updateDash();
+      }
+    } catch (e) {
+      document.getElementById("sDot").className = "status-dot"; document.getElementById("sDot").style.background = "#E53E3E";
+      document.getElementById("sTxt").textContent = "Erreur réseau";
+    }
+  }
+
+  function updateDash() {
+    const n = participants.length;
+    document.getElementById("cnt").textContent = n;
+
+    if (n === 0) {
+      document.getElementById("emptyState").style.display = "block";
+      document.getElementById("colQr").style.display = "none";
+      document.getElementById("colCharts").style.display = "none";
+      return;
+    }
+    document.getElementById("emptyState").style.display = "none";
+    document.getElementById("colQr").style.display = "flex";
+    document.getElementById("colCharts").style.display = "flex";
+
+    // Score moyen
+    const avg = participants.reduce((a, p) => a + (parseFloat(p.score) || 0), 0) / n;
+    document.getElementById("avgScore").textContent = `${avg.toFixed(1)}/15`;
+
+    // Classement
+    const sorted = [...participants].sort((a, b) => (parseFloat(b.score) || 0) - (parseFloat(a.score) || 0));
+    document.getElementById("pList").innerHTML = sorted.map(p => `<div class="p-item"><span class="name">${p.prenom}</span><span class="sc">${p.score}/15</span></div>`).join("");
+
+    // Module chart
+    updateModuleChart();
+    // Heatmap
+    updateHeatmap();
+  }
+
+  function updateModuleChart() {
+    const modData = MODULES.map(mod => {
+      let total = 0, correct = 0;
+      participants.forEach(p => {
+        const ms = p.moduleScores;
+        if (ms && ms[mod.id]) { correct += parseFloat(ms[mod.id].correct) || 0; total += parseFloat(ms[mod.id].total) || 0; }
+      });
+      return total > 0 ? Math.round((correct / total) * 100) : 0;
+    });
+
+    const ctx = document.getElementById("modChart");
+    if (modChart) { modChart.data.datasets[0].data = modData; modChart.update(); return; }
+    modChart = new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: MODULES.map(m => m.label),
+        datasets: [{ data: modData, backgroundColor: ["#52BEC0","#DDAC63","#52BEC0","#DDAC63"], borderRadius: 6, barThickness: 40 }]
+      },
+      options: {
+        indexAxis: "y", responsive: true, maintainAspectRatio: false,
+        scales: {
+          x: { beginAtZero: true, max: 100, ticks: { color: "#EBEBEE", callback: v => v + "%" }, grid: { color: "rgba(74,85,104,.3)" } },
+          y: { ticks: { color: "#EBEBEE", font: { size: 11 } }, grid: { display: false } }
+        },
+        plugins: { legend: { display: false } }, animation: { duration: 500 }
+      }
+    });
+  }
+
+  function updateHeatmap() {
+    const hm = document.getElementById("heatmap");
+    hm.innerHTML = "";
+    QUESTIONS.forEach((q, i) => {
+      const correct = participants.filter(p => {
+        const a = p.answers;
+        return Array.isArray(a) && (parseInt(a[i]) === 1);
+      }).length;
+      const pct = participants.length > 0 ? Math.round((correct / participants.length) * 100) : 0;
+      const color = pct >= 80 ? "#48BB78" : pct >= 50 ? "#DDAC63" : "#E53E3E";
+      hm.innerHTML += `<div class="hm-row"><span class="hm-label">Q${i + 1}</span><div class="hm-bar-bg"><div class="hm-bar-fill" style="width:${pct}%;background:${color}"></div></div><span class="hm-val">${pct}%</span></div>`;
+    });
+  }
+
+  function playDing() {
+    try {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+      o.connect(g); g.connect(audioCtx.destination); o.type = "sine";
+      o.frequency.setValueAtTime(880, audioCtx.currentTime);
+      o.frequency.exponentialRampToValueAtTime(1320, audioCtx.currentTime + .1);
+      g.gain.setValueAtTime(.15, audioCtx.currentTime);
+      g.gain.exponentialRampToValueAtTime(.001, audioCtx.currentTime + .5);
+      o.start(audioCtx.currentTime); o.stop(audioCtx.currentTime + .5);
+    } catch (e) {}
+  }
+  function animPill() { const p = document.getElementById("pill"); p.classList.remove("bounce"); void p.offsetWidth; p.classList.add("bounce"); }
+
+  // QR modal
+  document.getElementById("qrBtn").addEventListener("click", () => document.getElementById("qrOverlay").classList.add("active"));
+  document.getElementById("qrClose").addEventListener("click", () => document.getElementById("qrOverlay").classList.remove("active"));
+  document.getElementById("qrOverlay").addEventListener("click", e => { if (e.target.id === "qrOverlay") document.getElementById("qrOverlay").classList.remove("active"); });
+
+  // CSV
+  document.getElementById("csvBtn").addEventListener("click", () => {
+    if (!participants.length) return;
+    const h = ["Prénom", "Score", "Pourcentage", ...QUESTIONS.map((_, i) => `Q${i + 1}`)];
+    const rows = participants.map(p => [p.prenom, p.score, p.percentage, ...(Array.isArray(p.answers) ? p.answers : [])]);
+    const csv = [h, ...rows].map(r => r.map(c => `"${c}"`).join(",")).join("\n");
+    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
+    a.download = `evaluation-${sessionId}.csv`; a.click();
+  });
+</script>
+</body>
+</html>

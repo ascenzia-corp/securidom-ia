@@ -32,6 +32,7 @@ yarn-error.log*
 # Firebase config (contient des clés — généré au build depuis les env vars)
 public/icebreaker/js/firebase-config.js
 public/icebreaker/js/config.js
+public/evaluation/js/config.js
 
 # vercel
 .vercel

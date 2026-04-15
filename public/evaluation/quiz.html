@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz d'évaluation — Cadres Augmentés</title>
+  <link href="https://fonts.cdnfonts.com/css/telegraf" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Telegraf','Inter',-apple-system,sans-serif;background:linear-gradient(135deg,#1A202C 0%,#2D3748 100%);color:#EBEBEE;min-height:100dvh;display:flex;flex-direction:column}
+    .w{width:100%;max-width:520px;margin:0 auto;padding:20px;display:flex;flex-direction:column;min-height:100dvh}
+    .hd{text-align:center;margin-bottom:16px}
+    .logo{height:32px;opacity:.9}
+    .prog{margin-bottom:24px}
+    .prog-lbl{display:flex;justify-content:space-between;font-size:.7rem;color:#A0AEC0;margin-bottom:4px}
+    .prog-bar{width:100%;height:4px;background:#4A5568;border-radius:2px;overflow:hidden}
+    .prog-fill{height:100%;background:#DDAC63;border-radius:2px;transition:width .4s ease;width:0%}
+    .cnt{flex:1;display:flex;flex-direction:column;justify-content:center}
+    .scr{display:none;animation:fadeIn .3s ease}
+    .scr.active{display:flex;flex-direction:column}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    h2{font-size:1rem;color:#DDAC63;margin-bottom:16px;font-weight:600}
+    .q-text{font-size:1.05rem;line-height:1.5;margin-bottom:20px;color:#EBEBEE}
+    .q-num{font-size:.75rem;color:#A0AEC0;margin-bottom:8px}
+    .q-module{display:inline-block;font-size:.65rem;color:#DDAC63;background:rgba(221,172,99,.1);border:1px solid rgba(221,172,99,.2);border-radius:12px;padding:2px 10px;margin-bottom:12px}
+    .opts{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+    .opt-btn{width:100%;text-align:left;padding:14px 16px;background:#1A202C;border:2px solid #4A5568;border-radius:10px;color:#EBEBEE;font-size:.95rem;font-family:inherit;cursor:pointer;transition:all .2s;line-height:1.4}
+    .opt-btn:hover:not(.disabled){border-color:#DDAC63;background:rgba(221,172,99,.05)}
+    .opt-btn.correct{border-color:#48BB78;background:rgba(72,187,120,.15);color:#48BB78}
+    .opt-btn.wrong{border-color:#E53E3E;background:rgba(229,62,62,.1);color:#E53E3E}
+    .opt-btn.reveal-correct{border-color:#48BB78;background:rgba(72,187,120,.08)}
+    .opt-btn.disabled{cursor:default;opacity:.6}
+    .expl{background:#2D3748;border:1px solid #4A5568;border-radius:10px;padding:14px 16px;margin-bottom:16px;font-size:.85rem;line-height:1.5;color:#A0AEC0;display:none}
+    .expl.visible{display:block;animation:fadeIn .3s ease}
+    .expl strong{color:#DDAC63}
+    .text-input{width:100%;padding:14px 18px;background:#1A202C;border:1px solid #4A5568;border-radius:8px;color:#EBEBEE;font-size:1.1rem;font-family:inherit;outline:none;transition:border-color .2s;margin-bottom:20px}
+    .text-input:focus{border-color:#DDAC63}
+    .nav{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:12px}
+    .btn{padding:12px 28px;background:#DDAC63;color:#1A202C;border:none;border-radius:8px;font-size:1rem;font-weight:600;font-family:inherit;cursor:pointer;transition:background .2s}
+    .btn:hover{background:#B8860B}
+    .btn.hidden{display:none}
+    .err{display:none;color:#E53E3E;font-size:.85rem;margin-bottom:12px}
+    .err.visible{display:block}
+    .spinner{display:none;text-align:center;padding:48px}
+    .spinner.active{display:block}
+    .spinner-c{width:40px;height:40px;border:3px solid #4A5568;border-top-color:#DDAC63;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 16px}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    /* Score final */
+    .score-big{font-size:4rem;font-weight:800;color:#DDAC63;line-height:1;text-align:center}
+    .score-pct{font-size:1.2rem;color:#A0AEC0;text-align:center;margin-bottom:8px}
+    .score-msg{text-align:center;font-size:1rem;color:#EBEBEE;margin-bottom:24px;line-height:1.5}
+    .score-badge{display:inline-block;padding:6px 16px;background:rgba(221,172,99,.15);border:1px solid rgba(221,172,99,.3);border-radius:20px;color:#DDAC63;font-weight:600;font-size:.9rem;margin-bottom:24px}
+    .mod-bars{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+    .mod-row{display:flex;align-items:center;gap:10px}
+    .mod-label{width:160px;font-size:.8rem;color:#A0AEC0;flex-shrink:0}
+    .mod-bar-bg{flex:1;height:8px;background:#1A202C;border-radius:4px;overflow:hidden}
+    .mod-bar-fill{height:100%;border-radius:4px;transition:width .6s ease}
+    .mod-val{width:50px;text-align:right;font-size:.8rem;font-weight:600;color:#DDAC63}
+    .back-link{text-align:center;margin-top:16px}
+    .back-link a{color:#A0AEC0;text-decoration:none;font-size:.85rem}
+    .back-link a:hover{color:#EBEBEE}
+  </style>
+</head>
+<body>
+<div class="w">
+  <div class="hd"><img src="https://www.ascenzia.fr/hubfs/Corporate/Logos/PNG/logo_ascenzia_fond_sombre.png" alt="Ascenzia" class="logo"></div>
+  <div class="prog">
+    <div class="prog-lbl"><span id="pStep">Question 1 sur 15</span><span id="pPct">0%</span></div>
+    <div class="prog-bar"><div class="prog-fill" id="pFill"></div></div>
+  </div>
+  <div class="cnt">
+    <!-- Écran prénom -->
+    <div class="scr active" id="scrName">
+      <h2>Quiz d'évaluation</h2>
+      <p style="color:#A0AEC0;margin-bottom:20px;font-size:.9rem">15 questions pour évaluer vos acquis de la formation Cadres Augmentés par l'IA.</p>
+      <input type="text" class="text-input" id="nameInput" placeholder="Votre prénom" autofocus>
+      <p class="err" id="nameErr">Merci d'entrer votre prénom.</p>
+      <div class="nav"><span></span><button class="btn" id="nameNext">Commencer →</button></div>
+    </div>
+    <!-- Questions (générées en JS) -->
+    <div id="qContainer"></div>
+    <!-- Spinner -->
+    <div class="spinner" id="spinner"><div class="spinner-c"></div><p>Calcul du score…</p></div>
+    <!-- Score final -->
+    <div class="scr" id="scrResult">
+      <div class="score-big" id="rScore">—</div>
+      <div class="score-pct" id="rPct">sur 15</div>
+      <div style="text-align:center"><span class="score-badge" id="rBadge"></span></div>
+      <div class="score-msg" id="rMsg"></div>
+      <h2 style="text-align:left">Résultats par module</h2>
+      <div class="mod-bars" id="modBars"></div>
+      <div class="back-link"><a href="index.html" id="backLink">← Retour à l'accueil</a></div>
+    </div>
+  </div>
+</div>
+<script type="module">
+  import { QUESTIONS, MODULES, computeScore, computeModuleScores, getResultMessage } from "./js/questions.js";
+  import { WEBHOOK_URL } from "./js/config.js";
+
+  const params = new URLSearchParams(window.location.search);
+  const sessionId = params.get("session");
+  if (!sessionId) window.location.href = "index.html";
+
+  let currentQ = -1; // -1 = name screen
+  const totalSteps = QUESTIONS.length + 1;
+  const answers = new Array(QUESTIONS.length).fill(-1); // -1 = unanswered
+  const correctArr = new Array(QUESTIONS.length).fill(0); // 0/1
+  let prenom = "";
+
+  const pStep = document.getElementById("pStep");
+  const pPct = document.getElementById("pPct");
+  const pFill = document.getElementById("pFill");
+  const qContainer = document.getElementById("qContainer");
+
+  // Générer les écrans de questions
+  QUESTIONS.forEach((q, i) => {
+    const mod = MODULES.find(m => m.id === q.module);
+    const div = document.createElement("div");
+    div.className = "scr";
+    div.id = `scrQ${i}`;
+    div.innerHTML = `
+      <span class="q-module">${mod ? mod.label : ""}</span>
+      <div class="q-num">Question ${i + 1} sur ${QUESTIONS.length}</div>
+      <div class="q-text">${q.text}</div>
+      <div class="opts" id="opts${i}">
+        ${q.options.map((opt, oi) => `<button class="opt-btn" data-q="${i}" data-o="${oi}">${opt}</button>`).join("")}
+      </div>
+      <div class="expl" id="expl${i}"><strong>Explication :</strong> ${q.explanation}</div>
+      <div class="nav"><span></span><button class="btn hidden" id="next${i}">Suivant →</button></div>
+    `;
+    qContainer.appendChild(div);
+  });
+
+  function updateProgress() {
+    const step = currentQ < 0 ? 0 : currentQ;
+    const pct = Math.round((step / totalSteps) * 100);
+    pStep.textContent = currentQ < 0 ? "Bienvenue" : `Question ${currentQ + 1} sur ${QUESTIONS.length}`;
+    pPct.textContent = `${pct}%`;
+    pFill.style.width = `${pct}%`;
+  }
+
+  function showScreen(id) {
+    document.querySelectorAll(".scr").forEach(s => s.classList.remove("active"));
+    document.getElementById("spinner").classList.remove("active");
+    const el = document.getElementById(id);
+    if (el) { el.classList.add("active"); el.style.animation = "none"; el.offsetHeight; el.style.animation = ""; }
+  }
+
+  // Prénom
+  document.getElementById("nameNext").addEventListener("click", () => {
+    prenom = document.getElementById("nameInput").value.trim();
+    if (!prenom) { document.getElementById("nameErr").classList.add("visible"); return; }
+    document.getElementById("nameErr").classList.remove("visible");
+    currentQ = 0;
+    showScreen("scrQ0");
+    updateProgress();
+  });
+  document.getElementById("nameInput").addEventListener("keydown", e => { if (e.key === "Enter") document.getElementById("nameNext").click(); });
+
+  // Clic sur une option
+  document.querySelectorAll(".opt-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const qi = parseInt(btn.dataset.q);
+      const oi = parseInt(btn.dataset.o);
+      if (answers[qi] !== -1) return; // déjà répondu
+      answers[qi] = oi;
+      const q = QUESTIONS[qi];
+      const isCorrect = oi === q.correct;
+      correctArr[qi] = isCorrect ? 1 : 0;
+
+      // Feedback visuel
+      const opts = document.querySelectorAll(`#opts${qi} .opt-btn`);
+      opts.forEach((o, idx) => {
+        o.classList.add("disabled");
+        if (idx === q.correct) o.classList.add("correct");
+        if (idx === oi && !isCorrect) o.classList.add("wrong");
+      });
+
+      // Afficher explication
+      document.getElementById(`expl${qi}`).classList.add("visible");
+      // Afficher bouton suivant
+      document.getElementById(`next${qi}`).classList.remove("hidden");
+    });
+  });
+
+  // Boutons suivant
+  QUESTIONS.forEach((_, i) => {
+    document.getElementById(`next${i}`).addEventListener("click", () => {
+      if (i === QUESTIONS.length - 1) { submitQuiz(); return; }
+      currentQ = i + 1;
+      showScreen(`scrQ${currentQ}`);
+      updateProgress();
+      window.scrollTo(0, 0);
+    });
+  });
+
+  async function submitQuiz() {
+    document.querySelectorAll(".scr").forEach(s => s.classList.remove("active"));
+    document.getElementById("spinner").classList.add("active");
+
+    const score = computeScore(correctArr);
+    const pct = Math.round((score / QUESTIONS.length) * 100);
+    const moduleScores = computeModuleScores(correctArr);
+    const msg = getResultMessage(score);
+
+    const data = {
+      session: sessionId,
+      prenom,
+      answers: correctArr,
+      selectedAnswers: answers,
+      score,
+      percentage: pct,
+      moduleScores
+    };
+
+    sessionStorage.setItem("eval_result", JSON.stringify(data));
+
+    // Envoyer au webhook
+    if (WEBHOOK_URL && WEBHOOK_URL !== "VOTRE_WEBHOOK_URL") {
+      try {
+        await fetch(WEBHOOK_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
+      } catch (e) { console.error("Erreur envoi:", e); }
+    }
+
+    // Afficher résultat
+    showResult(score, pct, msg, moduleScores);
+  }
+
+  function showResult(score, pct, msg, moduleScores) {
+    document.getElementById("rScore").textContent = `${score}/15`;
+    document.getElementById("rPct").textContent = `${pct}%`;
+    document.getElementById("rBadge").textContent = score >= 13 ? "Cadre Augmenté" : score >= 10 ? "Confirmé" : score >= 7 ? "En progression" : "Débutant";
+    document.getElementById("rMsg").textContent = msg;
+    pFill.style.width = "100%";
+    pStep.textContent = "Terminé !";
+    pPct.textContent = "100%";
+
+    const modBars = document.getElementById("modBars");
+    modBars.innerHTML = "";
+    MODULES.forEach(mod => {
+      const ms = moduleScores[mod.id];
+      const p = Math.round((ms.correct / ms.total) * 100);
+      const color = p >= 80 ? "#48BB78" : p >= 50 ? "#DDAC63" : "#E53E3E";
+      modBars.innerHTML += `
+        <div class="mod-row">
+          <span class="mod-label">${mod.label}</span>
+          <div class="mod-bar-bg"><div class="mod-bar-fill" style="width:${p}%;background:${color}"></div></div>
+          <span class="mod-val">${ms.correct}/${ms.total}</span>
+        </div>`;
+    });
+
+    const s = params.get("session");
+    if (s) document.getElementById("backLink").href = `index.html?session=${encodeURIComponent(s)}`;
+    showScreen("scrResult");
+  }
+
+  updateProgress();
+</script>
+</body>
+</html>

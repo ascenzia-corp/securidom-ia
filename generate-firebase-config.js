@@ -1,13 +1,14 @@
 const fs = require("fs");
 const path = require("path");
 
-// Génère le fichier config.js pour l'icebreaker depuis les variables d'environnement
-const webhookUrl = process.env.NEXT_PUBLIC_ICEBREAKER_WEBHOOK_URL || "VOTRE_WEBHOOK_URL";
-
-const output = `// Fichier généré automatiquement au build — ne pas modifier manuellement
-export const WEBHOOK_URL = ${JSON.stringify(webhookUrl)};
-`;
-
-const dest = path.join(__dirname, "public", "icebreaker", "js", "config.js");
-fs.writeFileSync(dest, output, "utf-8");
+// --- Icebreaker config ---
+const icebreakerUrl = process.env.NEXT_PUBLIC_ICEBREAKER_WEBHOOK_URL || "VOTRE_WEBHOOK_URL";
+const icebreakerDest = path.join(__dirname, "public", "icebreaker", "js", "config.js");
+fs.writeFileSync(icebreakerDest, `// Fichier généré automatiquement au build\nexport const WEBHOOK_URL = ${JSON.stringify(icebreakerUrl)};\n`, "utf-8");
 console.log("✓ icebreaker config.js généré");
+
+// --- Evaluation config ---
+const evaluationUrl = process.env.NEXT_PUBLIC_EVALUATION_WEBHOOK_URL || "VOTRE_WEBHOOK_URL";
+const evaluationDest = path.join(__dirname, "public", "evaluation", "js", "config.js");
+fs.writeFileSync(evaluationDest, `// Fichier généré automatiquement au build\nexport const WEBHOOK_URL = ${JSON.stringify(evaluationUrl)};\n`, "utf-8");
+console.log("✓ evaluation config.js généré");

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz d'évaluation — Cadres Augmentés</title>
+  <link href="https://fonts.cdnfonts.com/css/telegraf" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Telegraf','Inter',-apple-system,sans-serif;background:linear-gradient(135deg,#1A202C 0%,#2D3748 100%);color:#EBEBEE;min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:24px}
+    .container{width:100%;max-width:440px;text-align:center}
+    .logo{height:40px;margin-bottom:28px;opacity:.9}
+    h1{font-size:1.8rem;font-weight:700;color:#DDAC63;margin-bottom:6px}
+    .sub{color:#A0AEC0;font-size:.9rem;margin-bottom:32px}
+    .field{margin-bottom:20px}
+    .field label{display:block;text-align:left;font-size:.8rem;color:#A0AEC0;margin-bottom:6px}
+    .field input{width:100%;padding:12px 16px;background:#1A202C;border:1px solid #4A5568;border-radius:8px;color:#EBEBEE;font-size:1rem;font-family:inherit;outline:none;transition:border-color .2s}
+    .field input:focus{border-color:#DDAC63}
+    .cards{display:flex;flex-direction:column;gap:14px}
+    .card{background:#2D3748;border:1px solid #4A5568;border-radius:12px;padding:24px;cursor:pointer;text-decoration:none;color:#EBEBEE;transition:all .2s;box-shadow:0 4px 24px rgba(0,0,0,.3)}
+    .card:hover{border-color:#DDAC63;transform:translateY(-2px)}
+    .card h2{font-size:1.1rem;font-weight:600;color:#DDAC63;margin-bottom:4px}
+    .card p{font-size:.85rem;opacity:.7}
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;align-items:center;justify-content:center;padding:24px}
+    .modal-overlay.active{display:flex}
+    .modal{background:#2D3748;border:1px solid #4A5568;border-radius:12px;padding:32px;width:100%;max-width:360px;box-shadow:0 4px 24px rgba(0,0,0,.5)}
+    .modal h3{color:#DDAC63;margin-bottom:16px;font-size:1.1rem}
+    .modal input{width:100%;padding:12px 16px;background:#1A202C;border:1px solid #4A5568;border-radius:8px;color:#EBEBEE;font-size:1rem;font-family:inherit;outline:none;margin-bottom:8px}
+    .modal input:focus{border-color:#DDAC63}
+    .modal .error{color:#E53E3E;font-size:.8rem;margin-bottom:12px;display:none}
+    .modal .error.visible{display:block}
+    .btn{display:inline-block;padding:12px 24px;background:#DDAC63;color:#1A202C;border:none;border-radius:8px;font-size:1rem;font-weight:600;font-family:inherit;cursor:pointer;transition:background .2s;width:100%}
+    .btn:hover{background:#B8860B}
+    .btn-cancel{background:transparent;color:#A0AEC0;margin-top:8px;font-size:.85rem}
+    .btn-cancel:hover{background:transparent;color:#EBEBEE}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img src="https://www.ascenzia.fr/hubfs/Corporate/Logos/PNG/logo_ascenzia_fond_sombre.png" alt="Ascenzia" class="logo">
+    <h1>Quiz d'évaluation</h1>
+    <p class="sub">Formation Cadres Augmentés par l'IA</p>
+    <div class="field">
+      <label for="sessionInput">Code de session</label>
+      <input type="text" id="sessionInput" placeholder="ex. securidom-eval-01">
+    </div>
+    <div class="cards">
+      <a class="card" id="participantCard" href="#">
+        <h2>📝 Je passe le quiz</h2>
+        <p>15 questions pour évaluer vos acquis</p>
+      </a>
+      <a class="card" id="formateurCard" href="#">
+        <h2>🎓 Dashboard formateur</h2>
+        <p>Résultats en direct sur vidéoprojecteur</p>
+      </a>
+    </div>
+  </div>
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <h3>Code d'accès formateur</h3>
+      <input type="password" id="codeInput" placeholder="Entrez le code…" autocomplete="off">
+      <p class="error" id="codeError">Code incorrect.</p>
+      <button class="btn" id="codeSubmit">Valider</button>
+      <button class="btn btn-cancel" id="codeCancel">Annuler</button>
+    </div>
+  </div>
+  <script>
+    const CODE = "ascenzia2026";
+    const params = new URLSearchParams(window.location.search);
+    const sessionInput = document.getElementById("sessionInput");
+    if (params.get("session")) sessionInput.value = params.get("session");
+
+    document.getElementById("participantCard").addEventListener("click", e => {
+      e.preventDefault();
+      const s = sessionInput.value.trim();
+      if (!s) { sessionInput.style.borderColor = "#E53E3E"; sessionInput.focus(); return; }
+      window.location.href = `quiz.html?session=${encodeURIComponent(s)}`;
+    });
+
+    const overlay = document.getElementById("modalOverlay");
+    const codeInput = document.getElementById("codeInput");
+    const codeError = document.getElementById("codeError");
+
+    document.getElementById("formateurCard").addEventListener("click", e => {
+      e.preventDefault(); overlay.classList.add("active"); codeInput.focus();
+    });
+    document.getElementById("codeCancel").addEventListener("click", () => {
+      overlay.classList.remove("active"); codeInput.value = ""; codeError.classList.remove("visible");
+    });
+    document.getElementById("codeSubmit").addEventListener("click", validate);
+    codeInput.addEventListener("keydown", e => { if (e.key === "Enter") validate(); });
+
+    function validate() {
+      if (codeInput.value === CODE) {
+        const s = sessionInput.value.trim();
+        window.location.href = `admin.html${s ? `?session=${encodeURIComponent(s)}` : ""}`;
+      } else { codeError.classList.add("visible"); codeInput.value = ""; codeInput.focus(); }
+    }
+    overlay.addEventListener("click", e => { if (e.target === overlay) { overlay.classList.remove("active"); codeError.classList.remove("visible"); } });
+  </script>
+</body>
+</html>
