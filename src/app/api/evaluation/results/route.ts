@@ -13,8 +13,10 @@ export async function GET(request: NextRequest) {
   const url = `${webhookUrl}?session=${encodeURIComponent(session)}`;
 
   try {
+    // Même pattern que le proxy icebreaker (qui fonctionne)
     let finalUrl = url;
     let resp = await fetch(finalUrl, { redirect: "manual" });
+
     let redirects = 0;
     while ((resp.status === 301 || resp.status === 302) && redirects < 5) {
       const location = resp.headers.get("location");
@@ -25,9 +27,10 @@ export async function GET(request: NextRequest) {
     }
 
     const text = await resp.text();
+
     if (text.startsWith("<!")) {
       return NextResponse.json(
-        { status: "error", message: "Apps Script returned HTML. Check deployment." },
+        { status: "error", message: "Apps Script returned HTML", url: webhookUrl, finalUrl, redirects },
         { status: 502 }
       );
     }
