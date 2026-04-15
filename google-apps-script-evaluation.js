@@ -34,7 +34,7 @@ function doPost(e) {
     // Creer les en-tetes si la feuille est vide
     if (sheet.getLastRow() === 0) {
       var headers = [
-        "Timestamp", "Prenom",
+        "Session", "Timestamp", "Prenom",
         "Q1", "Q2", "Q3", "Q4", "Q5", "Q6", "Q7", "Q8",
         "Q9", "Q10", "Q11", "Q12", "Q13", "Q14", "Q15",
         "Score", "Pourcentage",
@@ -54,6 +54,7 @@ function doPost(e) {
 
     // Construire la ligne de donnees
     var row = [
+      data.session || "",
       new Date().toISOString(),
       data.prenom || "",
       answers[0] || 0, answers[1] || 0, answers[2] || 0, answers[3] || 0,
@@ -92,30 +93,37 @@ function doGet(e) {
     }
 
     // Lire toutes les lignes de donnees (en sautant les en-tetes)
-    // 23 colonnes : Timestamp, Prenom, Q1-Q15, Score, Pourcentage, M1-M4
-    var data = sheet.getRange(2, 1, lastRow - 1, 23).getValues();
+    // 24 colonnes : Session, Timestamp, Prenom, Q1-Q15, Score, Pourcentage, M1-M4
+    var allData = sheet.getRange(2, 1, lastRow - 1, 24).getValues();
     var participants = [];
 
-    for (var i = 0; i < data.length; i++) {
-      var row = data[i];
+    // Filtrer par session si specifie
+    var sessionFilter = (e.parameter && e.parameter.session) ? e.parameter.session : "";
 
-      // Reconstruire les reponses Q1 a Q15 (colonnes 3 a 17, index 2 a 16)
+    for (var i = 0; i < allData.length; i++) {
+      var row = allData[i];
+
+      // Filtrer par session
+      if (sessionFilter && row[0] !== sessionFilter) continue;
+
+      // Reconstruire les reponses Q1 a Q15 (colonnes 4 a 18, index 3 a 17)
       var answers = [];
-      for (var q = 2; q <= 16; q++) {
+      for (var q = 3; q <= 17; q++) {
         answers.push(row[q]);
       }
 
       participants.push({
-        timestamp: row[0],
-        prenom: row[1],
+        session: row[0],
+        timestamp: row[1],
+        prenom: row[2],
         answers: answers,
-        score: row[17],
-        percentage: row[18],
+        score: row[18],
+        percentage: row[19],
         moduleScores: {
-          m1: row[19],
-          m2: row[20],
-          m3: row[21],
-          m4: row[22]
+          m1: row[20],
+          m2: row[21],
+          m3: row[22],
+          m4: row[23]
         }
       });
     }

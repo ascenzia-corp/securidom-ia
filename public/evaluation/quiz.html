@@ -204,17 +204,27 @@
     const moduleScores = computeModuleScores(correctArr);
     const msg = getResultMessage(score);
 
+    // Formater moduleScores en nombres simples pour le Sheet
+    const moduleScoresFlat = {};
+    for (const [k, v] of Object.entries(moduleScores)) {
+      moduleScoresFlat[k] = v.correct;
+    }
+
     const data = {
       session: sessionId,
       prenom,
       answers: correctArr,
-      selectedAnswers: answers,
       score,
       percentage: pct,
-      moduleScores
+      moduleScores: moduleScoresFlat
     };
 
-    sessionStorage.setItem("eval_result", JSON.stringify(data));
+    // Garder la version complète pour l'affichage résultat
+    sessionStorage.setItem("eval_result", JSON.stringify({
+      ...data,
+      moduleScores,
+      selectedAnswers: answers
+    }));
 
     // Envoyer au webhook
     if (WEBHOOK_URL && WEBHOOK_URL !== "VOTRE_WEBHOOK_URL") {
