@@ -106,7 +106,7 @@ export default function Quiz({
         {/* Header logos */}
         <div className="flex items-center justify-between pt-6 pb-2">
           <AscenziaLogo className="h-8 opacity-70" />
-          <BrandLogo src={brand.logoSrc} fallbackSrc={brand.logoFallbackSrc} alt={brand.name} className="h-8 opacity-70" />
+          <BrandLogo src={brand.logoSrc} fallbackSrc={brand.logoFallbackSrc} alt={brand.name} className={`h-8 ${brand.dimLogo ? "opacity-70" : ""}`} />
         </div>
 
         <div className="flex-1 flex flex-col items-center justify-center">
@@ -154,7 +154,7 @@ export default function Quiz({
         {/* Header logos */}
         <div className="flex items-center justify-between pt-6 pb-2">
           <AscenziaLogo className="h-8 opacity-70" />
-          <BrandLogo src={brand.logoSrc} fallbackSrc={brand.logoFallbackSrc} alt={brand.name} className="h-8 opacity-70" />
+          <BrandLogo src={brand.logoSrc} fallbackSrc={brand.logoFallbackSrc} alt={brand.name} className={`h-8 ${brand.dimLogo ? "opacity-70" : ""}`} />
         </div>
 
         <div className="flex-1 flex flex-col items-center justify-center">
@@ -239,7 +239,7 @@ export default function Quiz({
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <AscenziaLogo className="h-7 opacity-60" />
-        <BrandLogo src={brand.logoSrc} fallbackSrc={brand.logoFallbackSrc} alt={brand.name} className="h-7 opacity-60" />
+        <BrandLogo src={brand.logoSrc} fallbackSrc={brand.logoFallbackSrc} alt={brand.name} className={`h-7 ${brand.dimLogo ? "opacity-60" : ""}`} />
       </div>
 
       {/* Progress */}

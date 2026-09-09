@@ -7,6 +7,8 @@ export interface Brand {
   logoSrc: string;
   /** Fichier de repli si logoSrc est absent du dépôt */
   logoFallbackSrc?: string;
+  /** Affiche le logo atténué (opacité réduite) dans l'en-tête */
+  dimLogo?: boolean;
   /** Texte de pied de page sur l'écran d'accueil */
   footer: string;
   /**
@@ -21,6 +23,7 @@ export const securidomBrand: Brand = {
   name: "Securidom",
   entreprise: "Securidom",
   logoSrc: "/logo-securidom.png",
+  dimLogo: true,
   footer: "Formation Cadres Augmentés — Sécuridom · Martinique",
 };
 
@@ -32,6 +35,8 @@ export const apsBrand: Brand = {
   // automatiquement. En attendant, le SVG recréé sert de repli.
   logoSrc: "/logo-aps.webp",
   logoFallbackSrc: "/logo-aps.svg",
+  // Lettres noires sur fond noir : pleine opacité pour rester lisible
+  dimLogo: false,
   footer: "Formation Cadres Augmentés — APS · Groupe Securidom",
   // Rouge du logo APS (Groupe Securidom)
   cssVars: {
