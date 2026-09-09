@@ -5,6 +5,8 @@ export interface Brand {
   /** Valeur envoyée dans la colonne « Entreprise » du Google Sheet */
   entreprise: string;
   logoSrc: string;
+  /** Fichier de repli si logoSrc est absent du dépôt */
+  logoFallbackSrc?: string;
   /** Texte de pied de page sur l'écran d'accueil */
   footer: string;
   /**
@@ -26,7 +28,10 @@ export const apsBrand: Brand = {
   id: "aps",
   name: "APS",
   entreprise: "APS",
-  logoSrc: "/logo-aps.svg",
+  // Déposer le logo officiel sous public/logo-aps.webp : il sera utilisé
+  // automatiquement. En attendant, le SVG recréé sert de repli.
+  logoSrc: "/logo-aps.webp",
+  logoFallbackSrc: "/logo-aps.svg",
   footer: "Formation Cadres Augmentés — APS · Groupe Securidom",
   // Rouge du logo APS (Groupe Securidom)
   cssVars: {
