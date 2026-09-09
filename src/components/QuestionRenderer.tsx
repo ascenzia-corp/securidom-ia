@@ -29,11 +29,11 @@ export default function QuestionRenderer({
             onChange={(e) => onChange(e.target.value)}
             placeholder={question.placeholder}
             className="w-full px-4 py-3 bg-[#2D3748]/60 text-[#F7FAFC] rounded-xl
-              placeholder-[#A0AEC0]/60 outline-none focus:ring-2 focus:ring-[#DDAC63]/50
+              placeholder-[#A0AEC0]/60 outline-none focus:ring-2 focus:ring-[var(--brand-accent)]/50
               transition-all duration-200"
           />
           {error && (
-            <p className="text-sm text-[#DDAC63]/80">{error}</p>
+            <p className="text-sm text-[var(--brand-accent)]/80">{error}</p>
           )}
         </div>
       );
@@ -48,7 +48,7 @@ export default function QuestionRenderer({
               className={`w-full text-left px-4 py-3 rounded-xl transition-all duration-200
                 ${
                   value === option
-                    ? "bg-[#DDAC63]/20 text-[#DDAC63] ring-1 ring-[#DDAC63]/40"
+                    ? "bg-[var(--brand-accent)]/20 text-[var(--brand-accent)] ring-1 ring-[var(--brand-accent)]/40"
                     : "bg-[#2D3748]/40 text-[#F7FAFC] hover:bg-[#2D3748]/60"
                 }`}
             >
@@ -57,12 +57,12 @@ export default function QuestionRenderer({
                   className={`w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0
                     ${
                       value === option
-                        ? "border-[#DDAC63]"
+                        ? "border-[var(--brand-accent)]"
                         : "border-[#A0AEC0]/40"
                     }`}
                 >
                   {value === option && (
-                    <div className="w-2 h-2 rounded-full bg-[#DDAC63]" />
+                    <div className="w-2 h-2 rounded-full bg-[var(--brand-accent)]" />
                   )}
                 </div>
                 <span className="text-sm">{option}</span>
@@ -70,7 +70,7 @@ export default function QuestionRenderer({
             </button>
           ))}
           {error && (
-            <p className="text-sm text-[#DDAC63]/80">{error}</p>
+            <p className="text-sm text-[var(--brand-accent)]/80">{error}</p>
           )}
         </div>
       );
@@ -103,7 +103,7 @@ export default function QuestionRenderer({
               className={`w-full text-left px-4 py-3 rounded-xl transition-all duration-200
                 ${
                   selected.includes(option)
-                    ? "bg-[#DDAC63]/20 text-[#DDAC63] ring-1 ring-[#DDAC63]/40"
+                    ? "bg-[var(--brand-accent)]/20 text-[var(--brand-accent)] ring-1 ring-[var(--brand-accent)]/40"
                     : "bg-[#2D3748]/40 text-[#F7FAFC] hover:bg-[#2D3748]/60"
                 }`}
             >
@@ -112,12 +112,12 @@ export default function QuestionRenderer({
                   className={`w-4 h-4 rounded border flex items-center justify-center flex-shrink-0
                     ${
                       selected.includes(option)
-                        ? "bg-[#DDAC63] border-[#DDAC63]"
+                        ? "bg-[var(--brand-accent)] border-[var(--brand-accent)]"
                         : "border-[#A0AEC0]/40"
                     }`}
                 >
                   {selected.includes(option) && (
-                    <svg className="w-3 h-3 text-[#1A202C]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="w-3 h-3 text-[var(--brand-on-accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                     </svg>
                   )}
@@ -133,12 +133,12 @@ export default function QuestionRenderer({
                 className={`flex-shrink-0 w-4 h-4 rounded border flex items-center justify-center
                   ${
                     selected.some((s) => s.startsWith("Autre:"))
-                      ? "bg-[#DDAC63] border-[#DDAC63]"
+                      ? "bg-[var(--brand-accent)] border-[var(--brand-accent)]"
                       : "border-[#A0AEC0]/40"
                   }`}
               >
                 {selected.some((s) => s.startsWith("Autre:")) && (
-                  <svg className="w-3 h-3 text-[#1A202C]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-3 h-3 text-[var(--brand-on-accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                   </svg>
                 )}
@@ -163,13 +163,13 @@ export default function QuestionRenderer({
                 }}
                 placeholder="Autre (précisez)…"
                 className="flex-1 px-4 py-3 bg-[#2D3748]/40 text-[#F7FAFC] rounded-xl
-                  placeholder-[#A0AEC0]/60 outline-none focus:ring-2 focus:ring-[#DDAC63]/50
+                  placeholder-[#A0AEC0]/60 outline-none focus:ring-2 focus:ring-[var(--brand-accent)]/50
                   transition-all duration-200 text-sm"
               />
             </div>
           )}
           {error && (
-            <p className="text-sm text-[#DDAC63]/80">{error}</p>
+            <p className="text-sm text-[var(--brand-accent)]/80">{error}</p>
           )}
         </div>
       );
@@ -202,7 +202,7 @@ export default function QuestionRenderer({
                 className={`w-full text-left px-4 py-3 rounded-xl transition-all duration-200
                   ${
                     isSelected
-                      ? "bg-[#DDAC63]/20 text-[#DDAC63] ring-1 ring-[#DDAC63]/40"
+                      ? "bg-[var(--brand-accent)]/20 text-[var(--brand-accent)] ring-1 ring-[var(--brand-accent)]/40"
                       : isDisabled
                         ? "bg-[#2D3748]/20 text-[#A0AEC0]/40 cursor-not-allowed"
                         : "bg-[#2D3748]/40 text-[#F7FAFC] hover:bg-[#2D3748]/60"
@@ -213,12 +213,12 @@ export default function QuestionRenderer({
                     className={`w-4 h-4 rounded border flex items-center justify-center flex-shrink-0
                       ${
                         isSelected
-                          ? "bg-[#DDAC63] border-[#DDAC63]"
+                          ? "bg-[var(--brand-accent)] border-[var(--brand-accent)]"
                           : "border-[#A0AEC0]/40"
                       }`}
                   >
                     {isSelected && (
-                      <svg className="w-3 h-3 text-[#1A202C]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className="w-3 h-3 text-[var(--brand-on-accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                       </svg>
                     )}
@@ -229,7 +229,7 @@ export default function QuestionRenderer({
             );
           })}
           {error && (
-            <p className="text-sm text-[#DDAC63]/80">{error}</p>
+            <p className="text-sm text-[var(--brand-accent)]/80">{error}</p>
           )}
         </div>
       );
@@ -246,7 +246,7 @@ export default function QuestionRenderer({
                 className={`flex-1 flex flex-col items-center gap-2 py-4 px-2 rounded-xl transition-all duration-200
                   ${
                     value === item.label
-                      ? "bg-[#DDAC63]/20 ring-1 ring-[#DDAC63]/40 scale-105"
+                      ? "bg-[var(--brand-accent)]/20 ring-1 ring-[var(--brand-accent)]/40 scale-105"
                       : "bg-[#2D3748]/40 hover:bg-[#2D3748]/60"
                   }`}
               >
@@ -254,7 +254,7 @@ export default function QuestionRenderer({
                 <span
                   className={`text-xs ${
                     value === item.label
-                      ? "text-[#DDAC63]"
+                      ? "text-[var(--brand-accent)]"
                       : "text-[#A0AEC0]"
                   }`}
                 >
@@ -264,7 +264,7 @@ export default function QuestionRenderer({
             ))}
           </div>
           {error && (
-            <p className="text-sm text-[#DDAC63]/80">{error}</p>
+            <p className="text-sm text-[var(--brand-accent)]/80">{error}</p>
           )}
         </div>
       );
@@ -292,7 +292,7 @@ export default function QuestionRenderer({
                 onChange={(e) => onChange([e.target.value, vals[1] || ""])}
                 placeholder={question.placeholder}
                 className="w-full px-4 py-3 bg-[#2D3748]/60 text-[#F7FAFC] rounded-xl
-                  placeholder-[#A0AEC0]/60 outline-none focus:ring-2 focus:ring-[#DDAC63]/50
+                  placeholder-[#A0AEC0]/60 outline-none focus:ring-2 focus:ring-[var(--brand-accent)]/50
                   transition-all duration-200"
               />
             </div>
@@ -306,13 +306,13 @@ export default function QuestionRenderer({
                 onChange={(e) => onChange([vals[0] || "", e.target.value])}
                 placeholder={question.placeholder2 || question.placeholder}
                 className="w-full px-4 py-3 bg-[#2D3748]/60 text-[#F7FAFC] rounded-xl
-                  placeholder-[#A0AEC0]/60 outline-none focus:ring-2 focus:ring-[#DDAC63]/50
+                  placeholder-[#A0AEC0]/60 outline-none focus:ring-2 focus:ring-[var(--brand-accent)]/50
                   transition-all duration-200"
               />
             </div>
           </div>
           {error && (
-            <p className="text-sm text-[#DDAC63]/80">{error}</p>
+            <p className="text-sm text-[var(--brand-accent)]/80">{error}</p>
           )}
         </div>
       );
@@ -332,7 +332,7 @@ export default function QuestionRenderer({
               rows={question.minRows || 5}
               placeholder={question.placeholder || "Écrivez ici…"}
               className="w-full px-4 py-3 bg-[#2D3748]/60 text-[#F7FAFC] rounded-xl
-                placeholder-[#A0AEC0]/60 outline-none focus:ring-2 focus:ring-[#DDAC63]/50
+                placeholder-[#A0AEC0]/60 outline-none focus:ring-2 focus:ring-[var(--brand-accent)]/50
                 transition-all duration-200 resize-none"
             />
             {question.showCharCount && (
@@ -342,7 +342,7 @@ export default function QuestionRenderer({
             )}
           </div>
           {error && (
-            <p className="text-sm text-[#DDAC63]/80">{error}</p>
+            <p className="text-sm text-[var(--brand-accent)]/80">{error}</p>
           )}
         </div>
       );

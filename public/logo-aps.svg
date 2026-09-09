@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 150" role="img" aria-label="APS - Groupe Securidom">
+  <!-- Recréation approchée du logo APS. Remplacer ce fichier par le logo officiel (même nom) si besoin. -->
+  <g>
+    <polygon points="10,20 190,45 55,138" fill="#E30613"/>
+    <polygon points="120,60 195,80 140,132" fill="#E30613"/>
+  </g>
+  <text x="8" y="102"
+    font-family="Arial Black, Arial, sans-serif"
+    font-size="78"
+    font-weight="900"
+    font-style="italic"
+    fill="#111111"
+    stroke="#E8E8E8"
+    stroke-width="6"
+    paint-order="stroke fill"
+    letter-spacing="-4">APS</text>
+  <text x="52" y="128"
+    font-family="Arial, sans-serif"
+    font-size="15"
+    font-weight="bold"
+    fill="#E8E8E8"
+    stroke="#E8E8E8"
+    stroke-width="0.3">Groupe <tspan fill="#E30613" stroke="#E30613">SECURIDOM</tspan></text>
+</svg>

@@ -1,5 +1,12 @@
 @import "tailwindcss";
 
+:root {
+  /* Couleur d'accent par marque — surchargée sur /aps via un style inline */
+  --brand-accent: #DDAC63;
+  --brand-accent-hover: #C9963F;
+  --brand-on-accent: #1A202C;
+}
+
 @theme {
   --color-navy-900: #1A202C;
   --color-navy-800: #2D3748;

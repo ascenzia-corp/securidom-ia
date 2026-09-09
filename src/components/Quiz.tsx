@@ -2,10 +2,12 @@
 
 import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { questions } from "@/lib/questions";
+import { questions as securidomQuestions } from "@/lib/questions";
+import type { Question } from "@/lib/questions";
+import { securidomBrand, type Brand } from "@/lib/brands";
 import { buildPayload, submitToGoogleSheets } from "@/lib/submit";
 import AscenziaLogo from "./AscenziaLogo";
-import SecuridomLogo from "./SecuridomLogo";
+import BrandLogo from "./BrandLogo";
 import ProgressBar from "./ProgressBar";
 import QuestionRenderer from "./QuestionRenderer";
 
@@ -26,7 +28,15 @@ const slideVariants = {
   }),
 };
 
-export default function Quiz() {
+interface QuizProps {
+  brand?: Brand;
+  questions?: Question[];
+}
+
+export default function Quiz({
+  brand = securidomBrand,
+  questions = securidomQuestions,
+}: QuizProps) {
   const [screen, setScreen] = useState<Screen>("welcome");
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(1);
@@ -63,12 +73,12 @@ export default function Quiz() {
     } else {
       // Submit
       setIsSubmitting(true);
-      const payload = buildPayload(answers);
+      const payload = buildPayload(answers, brand.entreprise);
       await submitToGoogleSheets(payload);
       setIsSubmitting(false);
       setScreen("confirmation");
     }
-  }, [currentIndex, answers, validate]);
+  }, [currentIndex, answers, validate, questions, brand]);
 
   const handleBack = useCallback(() => {
     setError("");
@@ -96,7 +106,7 @@ export default function Quiz() {
         {/* Header logos */}
         <div className="flex items-center justify-between pt-6 pb-2">
           <AscenziaLogo className="h-8 opacity-70" />
-          <SecuridomLogo className="h-8 opacity-70" />
+          <BrandLogo src={brand.logoSrc} fallbackSrc={brand.logoFallbackSrc} alt={brand.name} className={`h-8 ${brand.dimLogo ? "opacity-70" : ""}`} />
         </div>
 
         <div className="flex-1 flex flex-col items-center justify-center">
@@ -115,21 +125,21 @@ export default function Quiz() {
             <p className="text-[#A0AEC0] text-base sm:text-lg leading-relaxed">
               Quelques questions pour personnaliser votre journée.
               <br />
-              <span className="text-[#DDAC63]">5 minutes chrono.</span>
+              <span className="text-[var(--brand-accent)]">5 minutes chrono.</span>
             </p>
           </div>
 
           <button
             onClick={() => setScreen("quiz")}
-            className="px-8 py-3.5 bg-[#DDAC63] text-[#1A202C] font-semibold rounded-xl
-              hover:bg-[#C9963F] active:scale-95 transition-all duration-200 text-base"
+            className="px-8 py-3.5 bg-[var(--brand-accent)] text-[var(--brand-on-accent)] font-semibold rounded-xl
+              hover:bg-[var(--brand-accent-hover)] active:scale-95 transition-all duration-200 text-base"
             style={{ fontFamily: "Manrope, sans-serif" }}
           >
             C&apos;est parti
           </button>
 
           <p className="text-xs text-[#A0AEC0]/60 pt-4">
-            Formation Cadres Augmentés — Sécuridom · Martinique
+            {brand.footer}
           </p>
         </motion.div>
         </div>
@@ -144,7 +154,7 @@ export default function Quiz() {
         {/* Header logos */}
         <div className="flex items-center justify-between pt-6 pb-2">
           <AscenziaLogo className="h-8 opacity-70" />
-          <SecuridomLogo className="h-8 opacity-70" />
+          <BrandLogo src={brand.logoSrc} fallbackSrc={brand.logoFallbackSrc} alt={brand.name} className={`h-8 ${brand.dimLogo ? "opacity-70" : ""}`} />
         </div>
 
         <div className="flex-1 flex flex-col items-center justify-center">
@@ -159,13 +169,13 @@ export default function Quiz() {
             initial={{ scale: 0, rotate: -180 }}
             animate={{ scale: 1, rotate: 0 }}
             transition={{ delay: 0.2, duration: 0.6, type: "spring", stiffness: 200 }}
-            className="w-20 h-20 mx-auto rounded-full bg-[#DDAC63]/20 flex items-center justify-center"
+            className="w-20 h-20 mx-auto rounded-full bg-[var(--brand-accent)]/20 flex items-center justify-center"
           >
             <motion.svg
               initial={{ pathLength: 0, opacity: 0 }}
               animate={{ pathLength: 1, opacity: 1 }}
               transition={{ delay: 0.5, duration: 0.5 }}
-              className="w-10 h-10 text-[#DDAC63]"
+              className="w-10 h-10 text-[var(--brand-accent)]"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -198,7 +208,7 @@ export default function Quiz() {
               Vos réponses ont bien été enregistrées. Elles nous permettront de
               personnaliser la formation à vos besoins.
             </p>
-            <p className="text-[#DDAC63] text-sm font-medium pt-2">
+            <p className="text-[var(--brand-accent)] text-sm font-medium pt-2">
               À très bientôt pour votre journée Cadres Augmentés !
             </p>
           </motion.div>
@@ -229,7 +239,7 @@ export default function Quiz() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <AscenziaLogo className="h-7 opacity-60" />
-        <SecuridomLogo className="h-7 opacity-60" />
+        <BrandLogo src={brand.logoSrc} fallbackSrc={brand.logoFallbackSrc} alt={brand.name} className={`h-7 ${brand.dimLogo ? "opacity-60" : ""}`} />
       </div>
 
       {/* Progress */}
@@ -253,7 +263,7 @@ export default function Quiz() {
               <motion.span
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="text-xs font-medium text-[#DDAC63] uppercase tracking-widest"
+                className="text-xs font-medium text-[var(--brand-accent)] uppercase tracking-widest"
               >
                 {currentQuestion.section}
               </motion.span>
@@ -266,7 +276,7 @@ export default function Quiz() {
             >
               {currentQuestion.title}
               {currentQuestion.required && (
-                <span className="text-[#DDAC63]/60 ml-1">*</span>
+                <span className="text-[var(--brand-accent)]/60 ml-1">*</span>
               )}
             </h2>
 
@@ -305,8 +315,8 @@ export default function Quiz() {
         <button
           onClick={handleNext}
           disabled={isSubmitting}
-          className="px-6 py-2.5 bg-[#DDAC63] text-[#1A202C] font-semibold rounded-xl
-            hover:bg-[#C9963F] active:scale-95 transition-all duration-200 text-sm
+          className="px-6 py-2.5 bg-[var(--brand-accent)] text-[var(--brand-on-accent)] font-semibold rounded-xl
+            hover:bg-[var(--brand-accent-hover)] active:scale-95 transition-all duration-200 text-sm
             disabled:opacity-50 disabled:cursor-not-allowed"
           style={{ fontFamily: "Manrope, sans-serif" }}
         >
