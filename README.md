@@ -2,6 +2,15 @@
 
 Quiz web destiné aux cadres et managers de Sécuridom, à remplir avant la formation « Cadres Augmentés par l'IA ».
 
+## Version APS (filiale du Groupe Securidom)
+
+Le même questionnaire existe aux couleurs d'APS (apsfrance.fr) sur la route **`/aps`** :
+
+- Même app, même projet Vercel, même webhook Google Sheets — aucune variable d'environnement à modifier.
+- Les réponses arrivent dans le même Google Sheet, distinguées par la colonne **Entreprise** (« Securidom » ou « APS »). Pour que cette colonne soit remplie, redéployez le Google Apps Script (`google-apps-script.js` mis à jour) : Apps Script > Déployer > Gérer les déploiements > Modifier > Nouvelle version. Sans redéploiement, les réponses APS arrivent quand même, mais sans la colonne Entreprise.
+- La charte APS (rouge `#E30613`, fond noir, logo) se règle dans `src/lib/brands.ts` et `src/app/aps/page.tsx`. Le logo est `public/logo-aps.svg` (recréation approchée — remplacez le fichier par le logo officiel en gardant le même nom).
+- Les questions APS sont dans `src/lib/questions-aps.ts` (libellés adaptés : domaine email, exemples de postes et de tâches).
+
 ## Déploiement en 3 étapes
 
 ### 1. Configurer Google Sheets

@@ -1,5 +1,6 @@
 export interface QuizData {
   timestamp: string;
+  entreprise: string;
   nom: string;
   email: string;
   poste: string;
@@ -16,7 +17,8 @@ export interface QuizData {
 }
 
 export function buildPayload(
-  answers: Record<string, string | string[]>
+  answers: Record<string, string | string[]>,
+  entreprise: string = "Securidom"
 ): QuizData {
   const nomEmail = answers.nom_email as unknown as string[];
   const reps = answers.taches_repetitives as unknown as string[];
@@ -24,6 +26,7 @@ export function buildPayload(
 
   return {
     timestamp: new Date().toISOString(),
+    entreprise,
     nom: Array.isArray(nomEmail) ? nomEmail[0] || "" : "",
     email: Array.isArray(nomEmail) ? nomEmail[1] || "" : "",
     poste: (answers.poste as string) || "",

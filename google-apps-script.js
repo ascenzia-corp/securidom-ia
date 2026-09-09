@@ -33,6 +33,7 @@ function doPost(e) {
         "Tâche stratégique 2",
         "Vision directeur 3 ans",
         "Attentes formation",
+        "Entreprise",
       ];
       sheet.appendRow(headers);
 
@@ -41,6 +42,16 @@ function doPost(e) {
       headerRange.setFontWeight("bold");
       headerRange.setBackground("#DDAC63");
       headerRange.setFontColor("#1A202C");
+    }
+
+    // Migration : ajoute la colonne "Entreprise" (col 15) si le sheet
+    // a été créé avant l'arrivée du formulaire APS
+    if (sheet.getRange(1, 15).getValue() !== "Entreprise") {
+      var entCell = sheet.getRange(1, 15);
+      entCell.setValue("Entreprise");
+      entCell.setFontWeight("bold");
+      entCell.setBackground("#DDAC63");
+      entCell.setFontColor("#1A202C");
     }
 
     // Append data row
@@ -59,6 +70,7 @@ function doPost(e) {
       data.tache_strategique_2 || "",
       data.vision_directeur_3ans || "",
       Array.isArray(data.attentes_formation) ? data.attentes_formation.join(", ") : (data.attentes_formation || ""),
+      data.entreprise || "",
     ];
 
     sheet.appendRow(row);
